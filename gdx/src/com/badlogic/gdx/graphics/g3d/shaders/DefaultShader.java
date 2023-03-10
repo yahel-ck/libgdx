@@ -695,6 +695,9 @@ public class DefaultShader extends BaseShader {
 				if (attributes.has(CubemapAttribute.EnvironmentMap)) prefix += "#define environmentCubemapFlag\n";
 			}
 		}
+		if (renderable.meshPart.mesh.isInstanced()) {
+			prefix += "#define instancedFlag\n";
+		}
 		final int n = renderable.meshPart.mesh.getVertexAttributes().size();
 		for (int i = 0; i < n; i++) {
 			final VertexAttribute attr = renderable.meshPart.mesh.getVertexAttributes().get(i);

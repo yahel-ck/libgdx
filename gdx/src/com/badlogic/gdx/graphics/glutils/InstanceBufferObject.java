@@ -41,6 +41,7 @@ public class InstanceBufferObject implements InstanceData {
 	private int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
+	private ShaderProgram lastShader;
 
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttribute... attributes) {
 		this(isStatic, numVertices, new VertexAttributes(attributes));
@@ -181,6 +182,7 @@ public class InstanceBufferObject implements InstanceData {
 
 	@Override
 	public void bind (ShaderProgram shader, int[] locations) {
+		if (shader == lastShader) return;
 		final GL20 gl = Gdx.gl20;
 
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
@@ -217,6 +219,7 @@ public class InstanceBufferObject implements InstanceData {
 				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
 			}
 		}
+		lastShader = shader;
 		isBound = true;
 	}
 
@@ -250,6 +253,7 @@ public class InstanceBufferObject implements InstanceData {
 			}
 		}
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
+		lastShader = null;
 		isBound = false;
 	}
 

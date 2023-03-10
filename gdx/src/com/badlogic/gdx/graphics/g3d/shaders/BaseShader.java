@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,10 +32,9 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntIntMap;
+import com.badlogic.gdx.utils.*;
+
+import java.util.HashMap;
 
 /** @author Xoppa A BaseShader is a wrapper around a ShaderProgram that keeps track of the uniform and attribute locations. It
  *         does not manage the ShaderPogram, you are still responsible for disposing the ShaderProgram. */
@@ -112,8 +111,13 @@ public abstract class BaseShader implements Shader {
 	public RenderContext context;
 	public Camera camera;
 	private Mesh currentMesh;
+	private int[] currentAttributeLocations;
+	private int[] currentInstanceAttributeLocations;
+	private final HashMap<Integer, Pool<int[]>> intArrayPools = new HashMap<>();
 
-	/** Register an uniform which might be used by this shader. Only possible prior to the call to init().
+	private Attributes combinedAttributes = new Attributes();
+
+	/** Register a uniform which might be used by this shader. Only possible prior to the call to init().
 	 * @return The ID of the uniform to use in this shader. */
 	public int register (final String alias, final Validator validator, final Setter setter) {
 		if (locations != null) throw new GdxRuntimeException("Cannot register an uniform after initialization");
@@ -190,15 +194,33 @@ public abstract class BaseShader implements Shader {
 				setters.set(i, null);
 			}
 		}
+
 		if (renderable != null) {
-			final VertexAttributes attrs = renderable.meshPart.mesh.getVertexAttributes();
-			final int c = attrs.size();
-			for (int i = 0; i < c; i++) {
-				final VertexAttribute attr = attrs.get(i);
-				final int location = program.getAttributeLocation(attr.alias);
-				if (location >= 0) attributes.put(attr.getKey(), location);
+			// Cache attribute locations in advanced
+			final Mesh mesh =  renderable.meshPart.mesh;
+			getAttributeLocations(mesh.getVertexAttributes());
+			if (mesh.isInstanced()) {
+				 getAttributeLocations(mesh.getInstances().getAttributes());
 			}
 		}
+	}
+
+	/**
+	 * Fetches an attribute location from the cache. If it's not in the cache
+	 * it will fetch it from the shader program and cache it.
+	 *
+	 * @return the location of the given attribute in this shader.
+	 */
+	public int getAttributeLocation(VertexAttribute attribute) {
+		final int key = attribute.getKey();
+		int location = attributes.get(key, -1);
+		if (location == -1) {
+			location = program.getAttributeLocation(attribute.alias);
+			if (location >= 0) {
+				attributes.put(key, location);
+			}
+		}
+		return location;
 	}
 
 	@Override
@@ -211,19 +233,21 @@ public abstract class BaseShader implements Shader {
 			if (setters.get(u = globalUniforms.get(i)) != null) setters.get(u).set(this, u, null, null);
 	}
 
-	private final IntArray tempArray = new IntArray();
-
 	private final int[] getAttributeLocations (final VertexAttributes attrs) {
-		tempArray.clear();
-		final int n = attrs.size();
-		for (int i = 0; i < n; i++) {
-			tempArray.add(attributes.get(attrs.get(i).getKey(), -1));
-		}
-		tempArray.shrink();
-		return tempArray.items;
-	}
+		final int attrCount = attrs.size();
 
-	private Attributes combinedAttributes = new Attributes();
+		Pool<int[]> pool = intArrayPools.get(attrCount);
+		if (pool == null) {
+			pool = new IntArrayPool(attrCount);
+			intArrayPools.put(attrCount, pool);
+		}
+
+		final int[] locations = pool.obtain();
+		for (int i = 0; i < attrCount; i++) {
+			locations[i] = getAttributeLocation(attrs.get(i));
+		}
+		return locations;
+	}
 
 	@Override
 	public void render (Renderable renderable) {
@@ -236,20 +260,41 @@ public abstract class BaseShader implements Shader {
 
 	public void render (Renderable renderable, final Attributes combinedAttributes) {
 		for (int u, i = 0; i < localUniforms.size; ++i)
-			if (setters.get(u = localUniforms.get(i)) != null) setters.get(u).set(this, u, renderable, combinedAttributes);
+			if (setters.get(u = localUniforms.get(i)) != null)
+				setters.get(u).set(this, u, renderable, combinedAttributes);
+
 		if (currentMesh != renderable.meshPart.mesh) {
-			if (currentMesh != null) currentMesh.unbind(program, tempArray.items);
-			currentMesh = renderable.meshPart.mesh;
-			currentMesh.bind(program, getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()));
+			unbindCurrentMesh();
+			bindMesh(renderable.meshPart.mesh);
 		}
+
 		renderable.meshPart.render(program, false);
 	}
 
 	@Override
 	public void end () {
+		unbindCurrentMesh();
+	}
+
+	protected void bindMesh(Mesh mesh) {
+		currentMesh = mesh;
+		currentAttributeLocations = getAttributeLocations(mesh.getVertexAttributes());
+		if (mesh.isInstanced()) {
+			 currentInstanceAttributeLocations = getAttributeLocations(mesh.getInstances().getAttributes());
+		}
+		mesh.bind(program, currentAttributeLocations, currentInstanceAttributeLocations);
+	}
+
+	protected void unbindCurrentMesh() {
 		if (currentMesh != null) {
-			currentMesh.unbind(program, tempArray.items);
+			currentMesh.unbind(program, currentAttributeLocations);
 			currentMesh = null;
+		}
+		if (currentAttributeLocations != null) {
+			final Pool<int[]> pool = intArrayPools.get(currentAttributeLocations.length);
+			if (pool != null)
+				pool.free(currentAttributeLocations);
+			currentAttributeLocations = null;
 		}
 	}
 

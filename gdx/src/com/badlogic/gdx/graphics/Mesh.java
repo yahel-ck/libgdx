@@ -511,8 +511,18 @@ public class Mesh implements Disposable {
 	 * @param shader the shader (does not bind the shader)
 	 * @param locations array containing the attribute locations. */
 	public void bind (final ShaderProgram shader, final int[] locations) {
+		bind(shader, locations, null);
+	}
+
+	/** Binds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} if indices where given. Use this with OpenGL
+	 * ES 2.0 and when auto-bind is disabled.
+	 *
+	 * @param shader the shader (does not bind the shader)
+	 * @param locations array containing the attribute locations.
+	 * @param instancedLocations array containing the locations of the instanced attributes. */
+	public void bind (final ShaderProgram shader, final int[] locations, final int[] instancedLocations) {
 		vertices.bind(shader, locations);
-		if (instances != null && instances.getNumInstances() > 0) instances.bind(shader, locations);
+		if (instances != null && instances.getNumInstances() > 0) instances.bind(shader, instancedLocations);
 		if (indices.getNumIndices() > 0) indices.bind();
 	}
 
@@ -679,6 +689,11 @@ public class Mesh implements Disposable {
 	/** @return the vertex attributes of this Mesh */
 	public VertexAttributes getVertexAttributes () {
 		return vertices.getAttributes();
+	}
+
+	/** @return the instance data of this Mesh, null if instanced rendering is not enabled. */
+	public InstanceData getInstances() {
+		return instances;
 	}
 
 	/** @return the backing FloatBuffer holding the vertices. Does not have to be a direct buffer on Android!
