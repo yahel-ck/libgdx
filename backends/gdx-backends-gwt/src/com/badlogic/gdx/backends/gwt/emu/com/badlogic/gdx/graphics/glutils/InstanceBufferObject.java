@@ -196,34 +196,26 @@ public class InstanceBufferObject implements InstanceData {
 			for (int i = 0; i < numAttributes; i++) {
 				final VertexAttribute attribute = attributes.get(i);
 				final int location = shader.getAttributeLocation(attribute.alias);
-				if (location >= 0)
-					bindVertexAttribute(shader, attribute, location);
+				if (location >= 0) bindVertexAttribute(shader, attribute, location);
 			}
 
 		} else {
 			for (int i = 0; i < numAttributes; i++) {
 				final VertexAttribute attribute = attributes.get(i);
 				final int location = locations[i];
-				if (location >= 0)
-					bindVertexAttribute(shader, attribute, location);
+				if (location >= 0) bindVertexAttribute(shader, attribute, location);
 			}
 		}
 		lastShader = shader;
 		isBound = true;
 	}
 
-	private void bindVertexAttribute(ShaderProgram shader, final VertexAttribute attribute, int location) {
+	private void bindVertexAttribute (ShaderProgram shader, final VertexAttribute attribute, int location) {
 		location += +attribute.unit;
 		shader.enableVertexAttribute(location);
 
-		shader.setVertexAttribute(
-				location,
-				attribute.numComponents,
-				attribute.type,
-				attribute.normalized,
-				attributes.vertexSize,
-				attribute.offset
-		);
+		shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized, attributes.vertexSize,
+			attribute.offset);
 		Gdx.gl30.glVertexAttribDivisor(location, 1);
 	}
 

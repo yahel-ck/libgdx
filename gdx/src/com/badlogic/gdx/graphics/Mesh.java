@@ -692,7 +692,7 @@ public class Mesh implements Disposable {
 	}
 
 	/** @return the instance data of this Mesh, null if instanced rendering is not enabled. */
-	public InstanceData getInstances() {
+	public InstanceData getInstances () {
 		return instances;
 	}
 

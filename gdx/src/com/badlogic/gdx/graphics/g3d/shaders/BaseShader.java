@@ -197,21 +197,19 @@ public abstract class BaseShader implements Shader {
 
 		if (renderable != null) {
 			// Cache attribute locations in advanced
-			final Mesh mesh =  renderable.meshPart.mesh;
+			final Mesh mesh = renderable.meshPart.mesh;
 			getAttributeLocations(mesh.getVertexAttributes());
 			if (mesh.isInstanced()) {
-				 getAttributeLocations(mesh.getInstances().getAttributes());
+				getAttributeLocations(mesh.getInstances().getAttributes());
 			}
 		}
 	}
 
-	/**
-	 * Fetches an attribute location from the cache. If it's not in the cache
-	 * it will fetch it from the shader program and cache it.
+	/** Fetches an attribute location from the cache. If it's not in the cache it will fetch it from the shader program and cache
+	 * it.
 	 *
-	 * @return the location of the given attribute in this shader.
-	 */
-	public int getAttributeLocation(VertexAttribute attribute) {
+	 * @return the location of the given attribute in this shader. */
+	public int getAttributeLocation (VertexAttribute attribute) {
 		final int key = attribute.getKey();
 		int location = attributes.get(key, -1);
 		if (location == -1) {
@@ -260,8 +258,7 @@ public abstract class BaseShader implements Shader {
 
 	public void render (Renderable renderable, final Attributes combinedAttributes) {
 		for (int u, i = 0; i < localUniforms.size; ++i)
-			if (setters.get(u = localUniforms.get(i)) != null)
-				setters.get(u).set(this, u, renderable, combinedAttributes);
+			if (setters.get(u = localUniforms.get(i)) != null) setters.get(u).set(this, u, renderable, combinedAttributes);
 
 		if (currentMesh != renderable.meshPart.mesh) {
 			unbindCurrentMesh();
@@ -276,24 +273,23 @@ public abstract class BaseShader implements Shader {
 		unbindCurrentMesh();
 	}
 
-	protected void bindMesh(Mesh mesh) {
+	protected void bindMesh (Mesh mesh) {
 		currentMesh = mesh;
 		currentAttributeLocations = getAttributeLocations(mesh.getVertexAttributes());
 		if (mesh.isInstanced()) {
-			 currentInstanceAttributeLocations = getAttributeLocations(mesh.getInstances().getAttributes());
+			currentInstanceAttributeLocations = getAttributeLocations(mesh.getInstances().getAttributes());
 		}
 		mesh.bind(program, currentAttributeLocations, currentInstanceAttributeLocations);
 	}
 
-	protected void unbindCurrentMesh() {
+	protected void unbindCurrentMesh () {
 		if (currentMesh != null) {
 			currentMesh.unbind(program, currentAttributeLocations);
 			currentMesh = null;
 		}
 		if (currentAttributeLocations != null) {
 			final Pool<int[]> pool = intArrayPools.get(currentAttributeLocations.length);
-			if (pool != null)
-				pool.free(currentAttributeLocations);
+			if (pool != null) pool.free(currentAttributeLocations);
 			currentAttributeLocations = null;
 		}
 	}
