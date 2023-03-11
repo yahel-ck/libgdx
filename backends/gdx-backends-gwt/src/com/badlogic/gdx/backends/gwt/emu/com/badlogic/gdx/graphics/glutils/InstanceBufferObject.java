@@ -41,7 +41,6 @@ public class InstanceBufferObject implements InstanceData {
 	private int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
-	private int lastShader = -1;
 
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttribute... attributes) {
 		this(isStatic, numVertices, new VertexAttributes(attributes));
@@ -181,7 +180,6 @@ public class InstanceBufferObject implements InstanceData {
 
 	@Override
 	public void bind (ShaderProgram shader, int[] locations) {
-		if (shader.getHandle() == lastShader) return;
 		final GL20 gl = Gdx.gl20;
 
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
@@ -196,27 +194,29 @@ public class InstanceBufferObject implements InstanceData {
 			for (int i = 0; i < numAttributes; i++) {
 				final VertexAttribute attribute = attributes.get(i);
 				final int location = shader.getAttributeLocation(attribute.alias);
-				if (location >= 0) bindVertexAttribute(shader, attribute, location);
+				if (location < 0) continue;
+				int unitOffset = +attribute.unit;
+				shader.enableVertexAttribute(location + unitOffset);
+
+				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
+						attributes.vertexSize, attribute.offset);
+				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
 			}
 
 		} else {
 			for (int i = 0; i < numAttributes; i++) {
 				final VertexAttribute attribute = attributes.get(i);
 				final int location = locations[i];
-				if (location >= 0) bindVertexAttribute(shader, attribute, location);
+				if (location < 0) continue;
+				int unitOffset = +attribute.unit;
+				shader.enableVertexAttribute(location + unitOffset);
+
+				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
+						attributes.vertexSize, attribute.offset);
+				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
 			}
 		}
-		lastShader = shader.getHandle();
 		isBound = true;
-	}
-
-	private void bindVertexAttribute (ShaderProgram shader, final VertexAttribute attribute, int location) {
-		location += +attribute.unit;
-		shader.enableVertexAttribute(location);
-
-		shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized, attributes.vertexSize,
-			attribute.offset);
-		Gdx.gl30.glVertexAttribDivisor(location, 1);
 	}
 
 	/** Unbinds this InstanceBufferObject.
