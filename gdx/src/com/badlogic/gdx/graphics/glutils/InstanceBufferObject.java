@@ -200,7 +200,7 @@ public class InstanceBufferObject implements InstanceData {
 				shader.enableVertexAttribute(location + unitOffset);
 
 				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
-						attributes.vertexSize, attribute.offset);
+					attributes.vertexSize, attribute.offset);
 				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
 			}
 
@@ -213,7 +213,7 @@ public class InstanceBufferObject implements InstanceData {
 				shader.enableVertexAttribute(location + unitOffset);
 
 				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
-						attributes.vertexSize, attribute.offset);
+					attributes.vertexSize, attribute.offset);
 				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
 			}
 		}
