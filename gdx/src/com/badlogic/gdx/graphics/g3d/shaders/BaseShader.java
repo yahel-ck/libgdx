@@ -261,7 +261,6 @@ public abstract class BaseShader implements Shader {
 			if (setters.get(u = localUniforms.get(i)) != null) setters.get(u).set(this, u, renderable, combinedAttributes);
 
 		if (currentMesh != renderable.meshPart.mesh) {
-			unbindCurrentMesh();
 			bindMesh(renderable.meshPart.mesh);
 		}
 
@@ -274,6 +273,7 @@ public abstract class BaseShader implements Shader {
 	}
 
 	protected void bindMesh (Mesh mesh) {
+		unbindCurrentMesh();
 		currentMesh = mesh;
 		currentAttributeLocations = getAttributeLocations(mesh.getVertexAttributes());
 		if (mesh.isInstanced()) {
@@ -291,6 +291,11 @@ public abstract class BaseShader implements Shader {
 			final Pool<int[]> pool = intArrayPools.get(currentAttributeLocations.length);
 			if (pool != null) pool.free(currentAttributeLocations);
 			currentAttributeLocations = null;
+		}
+		if (currentInstanceAttributeLocations != null) {
+			final Pool<int[]> pool = intArrayPools.get(currentInstanceAttributeLocations.length);
+			if (pool != null) pool.free(currentInstanceAttributeLocations);
+			currentInstanceAttributeLocations = null;
 		}
 	}
 
