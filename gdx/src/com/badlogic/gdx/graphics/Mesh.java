@@ -534,14 +534,24 @@ public class Mesh implements Disposable {
 		unbind(shader, null);
 	}
 
-	/** Unbinds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} is indices were given. Use this with OpenGL
+	/** Unbinds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} if indices were given. Use this with OpenGL
 	 * ES 1.x and when auto-bind is disabled.
 	 *
 	 * @param shader the shader (does not unbind the shader)
 	 * @param locations array containing the attribute locations. */
 	public void unbind (final ShaderProgram shader, final int[] locations) {
+		unbind(shader, locations, null);
+	}
+
+	/** Unbinds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} if indices were given. Use this with OpenGL
+	 * ES 1.x and when auto-bind is disabled.
+	 *
+	 * @param shader the shader (does not unbind the shader)
+	 * @param locations array containing the attribute locations.
+	 * @param instancedLocations array containing the locations of the instanced attributes.*/
+	public void unbind (final ShaderProgram shader, final int[] locations, final int[] instancedLocations) {
 		vertices.unbind(shader, locations);
-		if (instances != null && instances.getNumInstances() > 0) instances.unbind(shader, locations);
+		if (instances != null && instances.getNumInstances() > 0) instances.unbind(shader, instancedLocations);
 		if (indices.getNumIndices() > 0) indices.unbind();
 	}
 

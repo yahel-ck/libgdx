@@ -284,7 +284,7 @@ public abstract class BaseShader implements Shader {
 
 	protected void unbindCurrentMesh () {
 		if (currentMesh != null) {
-			currentMesh.unbind(program, currentAttributeLocations);
+			currentMesh.unbind(program, currentAttributeLocations, currentInstanceAttributeLocations);
 			currentMesh = null;
 		}
 		if (currentAttributeLocations != null) {
