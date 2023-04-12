@@ -16,12 +16,7 @@
 
 package com.badlogic.gdx.graphics.g3d.shaders;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GLTexture;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
@@ -33,8 +28,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
-
-import java.util.HashMap;
 
 /** @author Xoppa A BaseShader is a wrapper around a ShaderProgram that keeps track of the uniform and attribute locations. It
  *         does not manage the ShaderPogram, you are still responsible for disposing the ShaderProgram. */
@@ -113,7 +106,7 @@ public abstract class BaseShader implements Shader {
 	private Mesh currentMesh;
 	private int[] currentAttributeLocations;
 	private int[] currentInstanceAttributeLocations;
-	private final HashMap<Integer, Pool<int[]>> intArrayPools = new HashMap<>();
+	private final IntMap<Pool<int[]>> intArrayPools = new IntMap<>();
 
 	private Attributes combinedAttributes = new Attributes();
 
