@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /** A InstanceData instance holds instance data for rendering with OpenGL. It is implemented as either a
  * {@link InstanceBufferObject} or a {@link InstanceBufferObjectSubData}. Both require Open GL 3.3+.
@@ -32,6 +33,9 @@ public interface InstanceData extends Disposable {
 
 	/** @return the number of vertices this InstanceData can store */
 	public int getNumMaxInstances ();
+
+	/** @return whether this should be rendered using glDrawElementsIndirect/glDrawArraysIndirect */
+	public boolean shouldDrawIndirect ();
 
 	/** @return the {@link VertexAttributes} as specified during construction. */
 	public VertexAttributes getAttributes ();
@@ -70,6 +74,8 @@ public interface InstanceData extends Disposable {
 	 * @param sourceOffset the offset to start copying the data from
 	 * @param count the number of floats to copy */
 	public void updateInstanceData (int targetOffset, FloatBuffer data, int sourceOffset, int count);
+
+	public void setDrawCommands(IntBuffer commandsData);
 
 	/** Returns the underlying FloatBuffer and marks it as dirty, causing the buffer contents to be uploaded on the next call to
 	 * bind. If you need immediate uploading use {@link #setInstanceData(float[], int, int)}; Any modifications made to the Buffer

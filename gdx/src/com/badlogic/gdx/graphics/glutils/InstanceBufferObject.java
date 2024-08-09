@@ -18,6 +18,7 @@ package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL31;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.BufferUtils;
@@ -26,12 +27,16 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /** Modification of the {@link VertexBufferObject} class. Sets the glVertexAttribDivisor for every {@link VertexAttribute}
  * automatically.
  *
  * @author mrdlink */
 public class InstanceBufferObject implements InstanceData {
+
+	private static final int DRAW_COMMAND_INT_COUNT = 5;
+	private static final int DRAW_COMMAND_BYTE_COUNT = DRAW_COMMAND_INT_COUNT * 4;
 
 	private VertexAttributes attributes;
 	private FloatBuffer buffer;
@@ -42,11 +47,19 @@ public class InstanceBufferObject implements InstanceData {
 	boolean isDirty = false;
 	boolean isBound = false;
 
+	private int drawCommandsBufferHandle;
+	private IntBuffer drawCommandsData;
+	private boolean shouldDrawIndirect;
+
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttribute... attributes) {
 		this(isStatic, numVertices, new VertexAttributes(attributes));
 	}
 
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttributes instanceAttributes) {
+		this(isStatic, numVertices, instanceAttributes, false);
+	}
+
+	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttributes instanceAttributes, boolean shouldDrawIndirect) {
 		if (Gdx.gl30 == null)
 			throw new GdxRuntimeException("InstanceBufferObject requires a device running with GLES 3.0 compatibilty");
 
@@ -56,6 +69,11 @@ public class InstanceBufferObject implements InstanceData {
 		((Buffer)data).limit(0);
 		setBuffer(data, true, instanceAttributes);
 		setUsage(isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW);
+
+		this.shouldDrawIndirect = shouldDrawIndirect;
+		if (shouldDrawIndirect) {
+			drawCommandsBufferHandle = Gdx.gl.glGenBuffer();
+		}
 	}
 
 	@Override
@@ -71,6 +89,11 @@ public class InstanceBufferObject implements InstanceData {
 	@Override
 	public int getNumMaxInstances () {
 		return byteBuffer.capacity() / attributes.vertexSize;
+	}
+
+	@Override
+	public boolean shouldDrawIndirect() {
+		return drawCommandsBufferHandle > 0;
 	}
 
 	/** @deprecated use {@link #getBuffer(boolean)} instead */
@@ -158,6 +181,15 @@ public class InstanceBufferObject implements InstanceData {
 		bufferChanged();
 	}
 
+	@Override
+	public void setDrawCommands(IntBuffer commandsData) {
+		this.shouldDrawIndirect = true;
+		if (drawCommandsBufferHandle <= 0) {
+			drawCommandsBufferHandle = Gdx.gl.glGenBuffer();
+		}
+		this.drawCommandsData = commandsData;
+	}
+
 	/** @return The GL enum used in the call to {@link GL20#glBufferData(int, int, java.nio.Buffer, int)}, e.g. GL_STATIC_DRAW or
 	 *         GL_DYNAMIC_DRAW */
 	protected int getUsage () {
@@ -190,33 +222,28 @@ public class InstanceBufferObject implements InstanceData {
 			isDirty = false;
 		}
 
-		final int numAttributes = attributes.size();
-		if (locations == null) {
-			for (int i = 0; i < numAttributes; i++) {
-				final VertexAttribute attribute = attributes.get(i);
-				final int location = shader.getAttributeLocation(attribute.alias);
-				if (location < 0) continue;
-				int unitOffset = +attribute.unit;
-				shader.enableVertexAttribute(location + unitOffset);
-
-				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
-					attributes.vertexSize, attribute.offset);
-				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
-			}
-
-		} else {
-			for (int i = 0; i < numAttributes; i++) {
-				final VertexAttribute attribute = attributes.get(i);
-				final int location = locations[i];
-				if (location < 0) continue;
-				int unitOffset = +attribute.unit;
-				shader.enableVertexAttribute(location + unitOffset);
-
-				shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
-					attributes.vertexSize, attribute.offset);
-				Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
+		if (drawCommandsBufferHandle > 0) {
+			Gdx.app.log("GLBufferTest", "Binding GL_DRAW_INDIRECT_BUFFER to " + drawCommandsBufferHandle);
+			Gdx.gl.glBindBuffer(GL31.GL_DRAW_INDIRECT_BUFFER, drawCommandsBufferHandle);
+			if (drawCommandsData != null) {
+				gl.glBufferData(GL31.GL_DRAW_INDIRECT_BUFFER, drawCommandsData.limit(), drawCommandsData, Gdx.gl30.GL_DYNAMIC_DRAW);
+				drawCommandsData = null;
 			}
 		}
+
+		final int numAttributes = attributes.size();
+		for (int i = 0; i < numAttributes; i++) {
+			final VertexAttribute attribute = attributes.get(i);
+			final int location = locations != null ? locations[i] : shader.getAttributeLocation(attribute.alias);
+			if (location < 0) continue;
+			int unitOffset = +attribute.unit;
+			shader.enableVertexAttribute(location + unitOffset);
+
+			shader.setVertexAttribute(location + unitOffset, attribute.numComponents, attribute.type, attribute.normalized,
+					attributes.vertexSize, attribute.offset);
+			Gdx.gl30.glVertexAttribDivisor(location + unitOffset, 1);
+		}
+
 		isBound = true;
 	}
 
@@ -250,6 +277,9 @@ public class InstanceBufferObject implements InstanceData {
 			}
 		}
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
+		if (drawCommandsBufferHandle > 0) {
+			gl.glBindBuffer(GL31.GL_DRAW_INDIRECT_BUFFER, 0);
+		}
 		isBound = false;
 	}
 
@@ -257,6 +287,9 @@ public class InstanceBufferObject implements InstanceData {
 	@Override
 	public void invalidate () {
 		bufferHandle = Gdx.gl20.glGenBuffer();
+		if (drawCommandsBufferHandle > 0) {
+			drawCommandsBufferHandle = Gdx.gl.glGenBuffer();
+		}
 		isDirty = true;
 	}
 
@@ -267,6 +300,12 @@ public class InstanceBufferObject implements InstanceData {
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
 		gl.glDeleteBuffer(bufferHandle);
 		bufferHandle = 0;
+
+		if (drawCommandsBufferHandle > 0) {
+			Gdx.gl.glDeleteBuffer(drawCommandsBufferHandle);
+		}
+		drawCommandsBufferHandle = 0;
+
 		if (ownsBuffer) BufferUtils.disposeUnsafeByteBuffer(byteBuffer);
 	}
 }

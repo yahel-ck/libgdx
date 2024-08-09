@@ -48,6 +48,7 @@ public class VertexBufferObject implements VertexData {
 	private int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
+	private int bufferBindingTarget = GL20.GL_ARRAY_BUFFER;
 
 	/** Constructs a new interleaved VertexBufferObject.
 	 *
@@ -108,6 +109,10 @@ public class VertexBufferObject implements VertexData {
 		return buffer;
 	}
 
+	public void setBufferBindingTarget(int target) {
+		this.bufferBindingTarget = target;
+	}
+
 	/** Low level method to reset the buffer and attributes to the specified values. Use with care!
 	 * @param data
 	 * @param ownsBuffer
@@ -131,7 +136,7 @@ public class VertexBufferObject implements VertexData {
 
 	private void bufferChanged () {
 		if (isBound) {
-			Gdx.gl20.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
+			Gdx.gl20.glBufferData(bufferBindingTarget, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
 	}
@@ -180,10 +185,10 @@ public class VertexBufferObject implements VertexData {
 	public void bind (ShaderProgram shader, int[] locations) {
 		final GL20 gl = Gdx.gl20;
 
-		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
+		gl.glBindBuffer(bufferBindingTarget, bufferHandle);
 		if (isDirty) {
 			((Buffer)byteBuffer).limit(buffer.limit() * 4);
-			gl.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
+			gl.glBufferData(bufferBindingTarget, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
 
@@ -235,7 +240,7 @@ public class VertexBufferObject implements VertexData {
 				if (location >= 0) shader.disableVertexAttribute(location);
 			}
 		}
-		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(bufferBindingTarget, 0);
 		isBound = false;
 	}
 
@@ -250,7 +255,7 @@ public class VertexBufferObject implements VertexData {
 	@Override
 	public void dispose () {
 		GL20 gl = Gdx.gl20;
-		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(bufferBindingTarget, 0);
 		gl.glDeleteBuffer(bufferHandle);
 		bufferHandle = 0;
 		if (ownsBuffer) BufferUtils.disposeUnsafeByteBuffer(byteBuffer);

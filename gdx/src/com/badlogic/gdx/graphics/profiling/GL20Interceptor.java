@@ -36,6 +36,7 @@ public class GL20Interceptor extends GLInterceptor implements GL20 {
 	private void check () {
 		int error = gl20.glGetError();
 		while (error != GL20.GL_NO_ERROR) {
+			errorCount++;
 			glProfiler.getListener().onError(error);
 			error = gl20.glGetError();
 		}

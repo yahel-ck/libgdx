@@ -46,6 +46,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 	boolean isBound = false;
 	int vaoHandle = -1;
 	IntArray cachedLocations = new IntArray();
+	int bufferBindingTarget = GL20.GL_ARRAY_BUFFER;
 
 	/** Constructs a new interleaved VertexBufferObjectWithVAO.
 	 *
@@ -118,10 +119,14 @@ public class VertexBufferObjectWithVAO implements VertexData {
 		return buffer;
 	}
 
+	public void setBufferBindingTarget(int target) {
+		this.bufferBindingTarget = target;
+	}
+
 	private void bufferChanged () {
 		if (isBound) {
-			Gdx.gl20.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
-			Gdx.gl20.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
+			Gdx.gl20.glBindBuffer(bufferBindingTarget, bufferHandle);
+			Gdx.gl20.glBufferData(bufferBindingTarget, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
 	}
@@ -188,7 +193,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 		}
 
 		if (!stillValid) {
-			Gdx.gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
+			Gdx.gl.glBindBuffer(bufferBindingTarget, bufferHandle);
 			unbindAttributes(shader);
 			this.cachedLocations.clear();
 
@@ -228,9 +233,9 @@ public class VertexBufferObjectWithVAO implements VertexData {
 
 	private void bindData (GL20 gl) {
 		if (isDirty) {
-			gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
+			gl.glBindBuffer(bufferBindingTarget, bufferHandle);
 			((Buffer)byteBuffer).limit(buffer.limit() * 4);
-			gl.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
+			gl.glBufferData(bufferBindingTarget, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
 	}
@@ -263,7 +268,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 	public void dispose () {
 		GL30 gl = Gdx.gl30;
 
-		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
+		gl.glBindBuffer(bufferBindingTarget, 0);
 		gl.glDeleteBuffer(bufferHandle);
 		bufferHandle = 0;
 		if (ownsBuffer) {

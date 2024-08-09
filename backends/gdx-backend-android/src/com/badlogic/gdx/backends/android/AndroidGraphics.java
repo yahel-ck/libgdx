@@ -70,6 +70,8 @@ public class AndroidGraphics extends AbstractGraphics implements Renderer {
 	AndroidApplicationBase app;
 	GL20 gl20;
 	GL30 gl30;
+	GL31 gl31;
+	GL32 gl32;
 	EGLContext eglContext;
 	GLVersion glVersion;
 	String extensions;
@@ -225,12 +227,16 @@ public class AndroidGraphics extends AbstractGraphics implements Renderer {
 
 	@Override
 	public GL31 getGL31 () {
-		return null;
+		return gl31;
 	}
 
 	@Override
 	public void setGL31 (GL31 gl31) {
-
+		this.gl31 = gl31;
+		if (gl31 != null) {
+			setGL30(gl31);
+			Gdx.gl31 = gl31;
+		}
 	}
 
 	@Override
@@ -245,7 +251,11 @@ public class AndroidGraphics extends AbstractGraphics implements Renderer {
 
 	@Override
 	public void setGL32 (GL32 gl32) {
-
+		this.gl32 = gl32;
+		if (gl32 != null) {
+			setGL31(gl32);
+			Gdx.gl32 = gl32;
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -275,18 +285,26 @@ public class AndroidGraphics extends AbstractGraphics implements Renderer {
 	 * Motorola CLIQ and the Samsung Behold II.
 	 *
 	 * @param gl */
-	protected void setupGL (javax.microedition.khronos.opengles.GL10 gl) {
+	protected void setupGL (GL10 gl) {
 		String versionString = gl.glGetString(GL10.GL_VERSION);
 		String vendorString = gl.glGetString(GL10.GL_VENDOR);
 		String rendererString = gl.glGetString(GL10.GL_RENDERER);
 		glVersion = new GLVersion(Application.ApplicationType.Android, versionString, vendorString, rendererString);
 		if (config.useGL30 && glVersion.getMajorVersion() > 2) {
 			if (gl30 != null) return;
-			gl20 = gl30 = new AndroidGL30();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				gl20 = gl30 = gl31 = gl32 = new AndroidGL32();
+			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				gl20 = gl30 = gl31 = new AndroidGL31();
+			} else {
+				gl20 = gl30 = new AndroidGL30();
+			}
 
 			Gdx.gl = gl30;
 			Gdx.gl20 = gl30;
 			Gdx.gl30 = gl30;
+			Gdx.gl31 = gl31;
+			Gdx.gl32 = gl32;
 		} else {
 			if (gl20 != null) return;
 			gl20 = new AndroidGL20();

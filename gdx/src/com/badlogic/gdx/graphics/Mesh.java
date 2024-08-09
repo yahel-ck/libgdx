@@ -18,6 +18,7 @@ package com.badlogic.gdx.graphics;
 
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +44,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
+import static com.badlogic.gdx.graphics.GL31.GL_COMMAND_BARRIER_BIT;
+import static com.badlogic.gdx.graphics.GL31.GL_SHADER_STORAGE_BARRIER_BIT;
 
 /**
  * <p>
@@ -589,6 +594,25 @@ public class Mesh implements Disposable {
 		render(shader, primitiveType, offset, count, autoBind);
 	}
 
+	// TODO: Remove glGetInt
+	static IntBuffer params = BufferUtils.newIntBuffer(1);
+
+	private static int glGetInt(int target) {
+		params.clear();
+		params.put(0);
+		params.clear();
+		Gdx.gl.glGetIntegerv(target, params);
+		return params.get();
+	}
+
+	private static int glGetParamInt(int target, int param) {
+		params.clear();
+		params.put(0);
+		params.clear();
+		Gdx.gl.glGetBufferParameteriv(target, param, params);
+		return params.get();
+	}
+
 	/**
 	 * <p>
 	 * Renders the mesh using the given primitive type. offset specifies the offset into either the vertex buffer or the index
@@ -617,6 +641,15 @@ public class Mesh implements Disposable {
 	public void render (ShaderProgram shader, int primitiveType, int offset, int count, boolean autoBind) {
 		if (count == 0) return;
 
+		/*if (isInstanced) {
+			int computeShader = instances.getComputeShader();
+			if (computeShader > 0) {
+				Gdx.gl.glUseProgram(computeShader);
+				Gdx.gl31.glDispatchCompute(instances.getNumInstances(), 1, 1);
+				Gdx.gl31.glMemoryBarrier(GL_COMMAND_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
+			}
+		}*/
+
 		if (autoBind) bind(shader);
 
 		if (isVertexArray) {
@@ -640,14 +673,43 @@ public class Mesh implements Disposable {
 						+ ", offset: " + offset + ", max: " + indices.getNumMaxIndices() + ")");
 				}
 
+				// TODO: Figure out what value to put in indirect param (currently 0)
 				if (isInstanced && numInstances > 0) {
-					Gdx.gl30.glDrawElementsInstanced(primitiveType, count, GL20.GL_UNSIGNED_SHORT, offset * 2, numInstances);
+					if (instances.shouldDrawIndirect())  {
+						int vbuf = glGetInt(GL31.GL_VERTEX_ARRAY_BINDING);
+						int vsize = glGetParamInt(GL31.GL_VERTEX_ARRAY_BINDING, GL31.GL_ARRAY_SIZE);
+
+						int dbuf = glGetInt(GL31.GL_DRAW_INDIRECT_BUFFER_BINDING);
+						int dsize = glGetParamInt(GL31.GL_DRAW_INDIRECT_BUFFER, GL31.GL_BUFFER_SIZE);
+
+						int ebuf = glGetInt(GL31.GL_ELEMENT_ARRAY_BUFFER_BINDING);
+						int esize = glGetParamInt(GL31.GL_ELEMENT_ARRAY_BUFFER, GL31.GL_BUFFER_SIZE);
+
+						Gdx.app.log("GLBufferTest", "sizes: " +
+								"v#" + vbuf + "=" + vsize +
+								",d#" + dbuf + "=" + dsize +
+								",e#" + ebuf + "=" + esize);
+
+						assert vbuf > 0;
+						assert dbuf > 0;
+						assert ebuf > 0;
+
+						for (int i = 0; i < 100; i++) {
+							Gdx.gl31.glDrawElementsIndirect(primitiveType, GL20.GL_UNSIGNED_SHORT, i * 20L);
+						}
+					} else {
+						Gdx.gl30.glDrawElementsInstanced(primitiveType, count, GL20.GL_UNSIGNED_SHORT, offset * 2, numInstances);
+					}
 				} else {
 					Gdx.gl20.glDrawElements(primitiveType, count, GL20.GL_UNSIGNED_SHORT, offset * 2);
 				}
 			} else {
 				if (isInstanced && numInstances > 0) {
-					Gdx.gl30.glDrawArraysInstanced(primitiveType, offset, count, numInstances);
+					if (instances.shouldDrawIndirect()) {
+						Gdx.gl31.glDrawArraysIndirect(primitiveType, 0);
+					} else {
+						Gdx.gl30.glDrawArraysInstanced(primitiveType, offset, count, numInstances);
+					}
 				} else {
 					Gdx.gl20.glDrawArrays(primitiveType, offset, count);
 				}
@@ -686,6 +748,10 @@ public class Mesh implements Disposable {
 	/** @return the instanced attributes of this Mesh if any */
 	public VertexAttributes getInstancedAttributes () {
 		return instances != null ? instances.getAttributes() : null;
+	}
+
+	public InstanceData getInstances() {
+		return instances;
 	}
 
 	/** @return the backing FloatBuffer holding the vertices. Does not have to be a direct buffer on Android!
@@ -969,6 +1035,14 @@ public class Mesh implements Disposable {
 
 	public ShortBuffer getIndicesBuffer (boolean forWriting) {
 		return indices.getBuffer(forWriting);
+	}
+
+	public IndexData getIndices () {
+		return indices;
+	}
+
+	public VertexData getVertices() {
+		return vertices;
 	}
 
 	private static void addManagedMesh (Application app, Mesh mesh) {

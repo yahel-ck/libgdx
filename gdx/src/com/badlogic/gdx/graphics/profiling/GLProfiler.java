@@ -148,6 +148,10 @@ public class GLProfiler {
 		return glInterceptor.getVertexCount();
 	}
 
+	public int getErrorCount() {
+		return glInterceptor.errorCount;
+	}
+
 	/** Will reset the statistical information which has been collected so far. This should be called after every frame. Error
 	 * listener is kept as it is. */
 	public void reset () {

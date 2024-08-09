@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /** Modification of the {@link VertexBufferObjectSubData} class. Sets the glVertexAttribDivisor for every {@link VertexAttribute}
  * automatically.
@@ -97,6 +98,11 @@ public class InstanceBufferObjectSubData implements InstanceData {
 	@Override
 	public int getNumMaxInstances () {
 		return byteBuffer.capacity() / attributes.vertexSize;
+	}
+
+	@Override
+	public boolean shouldDrawIndirect() {
+		return false;
 	}
 
 	/** @deprecated use {@link #getBuffer(boolean)} instead */
@@ -185,6 +191,9 @@ public class InstanceBufferObjectSubData implements InstanceData {
 
 		bufferChanged();
 	}
+
+	@Override
+	public void setDrawCommands(IntBuffer commandsData) {}
 
 	/** Binds this InstanceBufferObject for rendering via glDrawArraysInstanced or glDrawElementsInstanced
 	 *

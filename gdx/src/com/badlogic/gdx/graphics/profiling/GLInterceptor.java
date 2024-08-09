@@ -25,6 +25,7 @@ public abstract class GLInterceptor implements GL20 {
 	protected int textureBindings;
 	protected int drawCalls;
 	protected int shaderSwitches;
+	protected int errorCount;
 	protected final FloatCounter vertexCount = new FloatCounter(0);
 
 	protected GLProfiler glProfiler;
@@ -75,6 +76,7 @@ public abstract class GLInterceptor implements GL20 {
 		textureBindings = 0;
 		drawCalls = 0;
 		shaderSwitches = 0;
+		errorCount = 0;
 		vertexCount.reset();
 	}
 }
