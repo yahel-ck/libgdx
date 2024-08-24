@@ -158,6 +158,10 @@
     void getWorldTransform(btTransform & out) {
 		out = $self->getWorldTransform();
 	}
+
+	float* getWorldTransformBuffer() {
+	    return (float *)($self->getWorldTransform());
+	}
 	
     void getInterpolationWorldTransform(btTransform & out) {
 		out = $self->getInterpolationWorldTransform();
