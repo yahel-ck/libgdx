@@ -37,6 +37,8 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntIntMap;
 
+import java.nio.FloatBuffer;
+
 /** @author Xoppa A BaseShader is a wrapper around a ShaderProgram that keeps track of the uniform and attribute locations. It
  *         does not manage the ShaderPogram, you are still responsible for disposing the ShaderProgram. */
 public abstract class BaseShader implements Shader {
@@ -384,6 +386,12 @@ public abstract class BaseShader implements Shader {
 	public final boolean set (final int uniform, final GLTexture texture) {
 		if (locations[uniform] < 0) return false;
 		program.setUniformi(locations[uniform], context.textureBinder.bind(texture));
+		return true;
+	}
+
+	public final boolean set (final int uniform, final FloatBuffer values) {
+		if (locations[uniform] < 0) return false;
+		program.setUniformMatrix4fv(locations[uniform], values, 1, false);
 		return true;
 	}
 }
