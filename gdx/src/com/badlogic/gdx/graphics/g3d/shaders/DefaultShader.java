@@ -170,7 +170,10 @@ public class DefaultShader extends BaseShader {
 		public final static Setter worldTrans = new LocalSetter() {
 			@Override
 			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				shader.set(inputID, renderable.worldTransform);
+				if (renderable.worldTransformBuffer != null)
+					shader.set(inputID, renderable.worldTransformBuffer);
+				else
+					shader.set(inputID, renderable.worldTransform);
 			}
 		};
 		public final static Setter viewWorldTrans = new LocalSetter() {
@@ -755,6 +758,10 @@ public class DefaultShader extends BaseShader {
 				final VertexAttribute attr = instancedAttrs.get(i);
 				prefix += "#define " + attr.alias + "_instancedFlag\n";
 			}
+		}
+
+		if (renderable.isTransformInBullet3Format) {
+			prefix += "#define a_worldTrans_bullet3FormatFlag\n";
 		}
 
 		return prefix;
