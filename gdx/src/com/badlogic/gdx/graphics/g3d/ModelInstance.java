@@ -29,6 +29,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Pool;
 
+import java.nio.FloatBuffer;
+
 /** An instance of a {@link Model}, allows to specify global transform and modify the materials, as it has a copy of the model's
  * materials. Multiple instances can be created from the same Model, all sharing the meshes and textures of the Model. The Model
  * owns the meshes and textures, to dispose of these, the Model has to be disposed. Therefor, the Model must outlive all its
@@ -53,6 +55,8 @@ public class ModelInstance implements RenderableProvider {
 	public final Model model;
 	/** the world transform **/
 	public Matrix4 transform;
+	/** Optional buffer with transform data to be used instead of the transform matrix. */
+	public FloatBuffer transformBuffer;
 	/** user definable value, which is passed to the {@link Shader}. */
 	public Object userData;
 
@@ -369,12 +373,17 @@ public class ModelInstance implements RenderableProvider {
 
 	public Renderable getRenderable (final Renderable out, final Node node, final NodePart nodePart) {
 		nodePart.setRenderable(out);
-		if (nodePart.bones == null && transform != null)
-			out.worldTransform.set(transform).mul(node.globalTransform);
-		else if (transform != null)
-			out.worldTransform.set(transform);
-		else
-			out.worldTransform.idt();
+		if (transformBuffer != null) {
+			out.worldTransformBuffer = transformBuffer;
+		} else {
+			out.worldTransformBuffer = null;
+			if (nodePart.bones == null && transform != null)
+				out.worldTransform.set(transform).mul(node.globalTransform);
+			else if (transform != null)
+				out.worldTransform.set(transform);
+			else
+				out.worldTransform.idt();
+		}
 		out.userData = userData;
 		return out;
 	}

@@ -19,9 +19,12 @@ package com.badlogic.gdx.graphics.g3d;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
+import com.badlogic.gdx.graphics.glutils.InstanceData;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+
+import java.nio.FloatBuffer;
 
 /** A Renderable contains all information about a single render instruction (typically a draw call).
  * </p>
@@ -72,6 +75,7 @@ public class Renderable {
 	/** Used to specify the transformations (like translation, scale and rotation) to apply to the shape. In other words: it is
 	 * used to transform the vertices from model space into world space. **/
 	public final Matrix4 worldTransform = new Matrix4();
+	public FloatBuffer worldTransformBuffer = null;
 	/** The {@link MeshPart} that contains the shape to render **/
 	public final MeshPart meshPart = new MeshPart();
 	/** The {@link Material} to be applied to the shape (part of the mesh), must not be null.
@@ -92,6 +96,10 @@ public class Renderable {
 	public Shader shader;
 	/** User definable value, may be null. */
 	public Object userData;
+	/** Instanced rendering data, may be null.
+	 * Used to implement instanced rendering (rendering multiple instances with one draw call). */
+	public InstanceData instances;
+	public boolean isTransformInBullet3Format = false;
 
 	public Renderable set (Renderable renderable) {
 		worldTransform.set(renderable.worldTransform);
@@ -101,6 +109,7 @@ public class Renderable {
 		environment = renderable.environment;
 		shader = renderable.shader;
 		userData = renderable.userData;
+		instances = renderable.instances;
 		return this;
 	}
 }
