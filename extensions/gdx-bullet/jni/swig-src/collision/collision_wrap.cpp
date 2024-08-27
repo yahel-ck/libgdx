@@ -2030,7 +2030,7 @@ SWIGINTERN void btCollisionObject_getWorldTransform__SWIG_2(btCollisionObject *s
 		out = self->getWorldTransform();
 	}
 SWIGINTERN float *btCollisionObject_getWorldTransformBuffer(btCollisionObject *self){
-	    return (float *)(self->getWorldTransform());
+	    return (float *)(& self->getWorldTransform());
 	}
 SWIGINTERN void btCollisionObject_getInterpolationWorldTransform__SWIG_2(btCollisionObject *self,btTransform &out){
 		out = self->getInterpolationWorldTransform();
