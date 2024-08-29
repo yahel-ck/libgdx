@@ -533,7 +533,7 @@ public class btCollisionObject extends BulletBase implements
     CollisionJNI.btCollisionObject_getWorldTransform__SWIG_2(swigCPtr, this, out);
   }
 
-  public java.nio.FloatBuffer getWorldTransformBuffer() {
+  public Object getWorldTransformBuffer() {
     return CollisionJNI.btCollisionObject_getWorldTransformBuffer(swigCPtr, this);
 }
 

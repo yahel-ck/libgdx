@@ -142,6 +142,7 @@
 %javamethodmodifiers btCollisionObject::internalSetGdxBridge "private";
 %javamethodmodifiers btCollisionObject::internalGetGdxBridge "private";
 
+
 %extend btCollisionObject {
 	void internalSetGdxBridge(GdxCollisionObjectBridge *bridge) {
 		$self->setUserPointer(bridge);
@@ -159,10 +160,14 @@
 		out = $self->getWorldTransform();
 	}
 
-	float* getWorldTransformBuffer() {
-	    return (float *)($self->getWorldTransform());
-	}
-	
+	jobject getWorldTransformBuffer() {
+	    JNIEnv *env = JNU_GetEnv();
+	    return env->NewDirectByteBuffer(
+            (void *)(& $self->getWorldTransform()),
+            sizeof(btTransform)
+        );
+    }
+
     void getInterpolationWorldTransform(btTransform & out) {
 		out = $self->getInterpolationWorldTransform();
 	}
