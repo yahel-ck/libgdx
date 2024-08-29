@@ -509,6 +509,7 @@ public class DefaultShader extends BaseShader {
 	private final long vertexMask;
 	private final int textureCoordinates;
 	private int[] boneWeightsLocations;
+	private boolean isTransformInBullet3Format;
 	protected final Config config;
 	/** Attributes which are not required but always supported. */
 	private final static long optionalAttributes = IntAttribute.CullFace | DepthTestAttribute.Type;
@@ -569,6 +570,7 @@ public class DefaultShader extends BaseShader {
 		if (renderable.bones != null) {
 			boneWeightsLocations = new int[config.numBoneWeights];
 		}
+		this.isTransformInBullet3Format = renderable.isTransformInBullet3Format;
 
 		// Global uniforms
 		u_projTrans = register(Inputs.projTrans, Setters.projTrans);
@@ -777,7 +779,8 @@ public class DefaultShader extends BaseShader {
 		final long renderableMask = combineAttributeMasks(renderable);
 		return (attributesMask == (renderableMask | optionalAttributes))
 			&& (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked())
-			&& (renderable.environment != null) == lighting;
+			&& (renderable.environment != null) == lighting
+				&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
 	}
 
 	@Override

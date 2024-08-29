@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodeAnimation;
 import com.badlogic.gdx.graphics.g3d.model.NodeKeyframe;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.graphics.glutils.InstanceData;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -57,8 +58,12 @@ public class ModelInstance implements RenderableProvider {
 	public Matrix4 transform;
 	/** Optional buffer with transform data to be used instead of the transform matrix. */
 	public FloatBuffer transformBuffer;
+	public boolean isTransformInBullet3Format = false;
 	/** user definable value, which is passed to the {@link Shader}. */
 	public Object userData;
+	/** Instanced rendering data, may be null.
+	 * Used to implement instanced rendering (rendering multiple instances with one draw call). */
+	private InstanceData instances;
 
 	/** Constructs a new ModelInstance with all nodes and materials of the given model.
 	 * @param model The {@link Model} to create an instance of. */
@@ -220,6 +225,14 @@ public class ModelInstance implements RenderableProvider {
 	/** @return A newly created ModelInstance which is a copy of this ModelInstance */
 	public ModelInstance copy () {
 		return new ModelInstance(this);
+	}
+
+	public InstanceData getInstances() {
+		return instances;
+	}
+
+	public void setInstances(InstanceData instances) {
+		this.instances = instances;
 	}
 
 	private void copyNodes (Array<Node> nodes) {
@@ -385,6 +398,8 @@ public class ModelInstance implements RenderableProvider {
 				out.worldTransform.idt();
 		}
 		out.userData = userData;
+		out.instances = getInstances();
+		out.isTransformInBullet3Format = isTransformInBullet3Format;
 		return out;
 	}
 
