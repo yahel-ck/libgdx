@@ -1559,7 +1559,7 @@ public class CollisionJNI {
   public final static native long btCollisionObject_internalGetGdxBridge(long jarg1, btCollisionObject jarg1_);
   public final static native void btCollisionObject_getAnisotropicFriction__SWIG_1(long jarg1, btCollisionObject jarg1_, Vector3 jarg2);
   public final static native void btCollisionObject_getWorldTransform__SWIG_2(long jarg1, btCollisionObject jarg1_, Matrix4 jarg2);
-  public final static native java.nio.FloatBuffer btCollisionObject_getWorldTransformBuffer(long jarg1, btCollisionObject jarg1_);
+  public final static native java.lang.Object btCollisionObject_getWorldTransformBuffer(long jarg1, btCollisionObject jarg1_);
   public final static native void btCollisionObject_getInterpolationWorldTransform__SWIG_2(long jarg1, btCollisionObject jarg1_, Matrix4 jarg2);
   public final static native void btCollisionObject_getInterpolationLinearVelocity__SWIG_1(long jarg1, btCollisionObject jarg1_, Vector3 jarg2);
   public final static native void btCollisionObject_getInterpolationAngularVelocity__SWIG_1(long jarg1, btCollisionObject jarg1_, Vector3 jarg2);

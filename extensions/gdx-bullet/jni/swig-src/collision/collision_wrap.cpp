@@ -1467,6 +1467,27 @@ static jdoubleArray SWIG_JavaArrayOutDouble (JNIEnv *jenv, double *result, jsize
 #include <LinearMath/btTransform.h>
 
 
+#include <stdexcept>
+#include "jni.h"
+
+static JavaVM *cached_jvm = 0;
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
+  cached_jvm = jvm;
+  return JNI_VERSION_1_2;
+}
+
+static JNIEnv * JNU_GetEnv() {
+  JNIEnv *env;
+  jint rc = cached_jvm->GetEnv((void **)&env, JNI_VERSION_1_2);
+  if (rc == JNI_EDETACHED)
+    throw std::runtime_error("current thread not attached");
+  if (rc == JNI_EVERSION)
+    throw std::runtime_error("jni version not supported");
+  return env;
+}
+
+
 #include <BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h>
 
 
@@ -2029,9 +2050,13 @@ SWIGINTERN void btCollisionObject_getAnisotropicFriction__SWIG_1(btCollisionObje
 SWIGINTERN void btCollisionObject_getWorldTransform__SWIG_2(btCollisionObject *self,btTransform &out){
 		out = self->getWorldTransform();
 	}
-SWIGINTERN float *btCollisionObject_getWorldTransformBuffer(btCollisionObject *self){
-	    return (float *)(& self->getWorldTransform());
-	}
+SWIGINTERN jobject btCollisionObject_getWorldTransformBuffer(btCollisionObject *self){
+	    JNIEnv *env = JNU_GetEnv();
+	    return env->NewDirectByteBuffer(
+            (void *)(& self->getWorldTransform()),
+            sizeof(btTransform)
+        );
+    }
 SWIGINTERN void btCollisionObject_getInterpolationWorldTransform__SWIG_2(btCollisionObject *self,btTransform &out){
 		out = self->getInterpolationWorldTransform();
 	}
@@ -30561,14 +30586,14 @@ SWIGEXPORT void JNICALL Java_com_badlogic_gdx_physics_bullet_collision_Collision
 SWIGEXPORT jobject JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1getWorldTransformBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jobject jresult = 0 ;
   btCollisionObject *arg1 = (btCollisionObject *) 0 ;
-  float *result = 0 ;
+  jobject result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(btCollisionObject **)&jarg1; 
-  result = (float *)btCollisionObject_getWorldTransformBuffer(arg1);
-  *(float **)&jresult = result; 
+  result = btCollisionObject_getWorldTransformBuffer(arg1);
+  jresult = result; 
   return jresult;
 }
 
