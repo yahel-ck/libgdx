@@ -17,7 +17,7 @@ subject to the following restrictions:
 #include "btCollisionObject.h"
 #include "LinearMath/btSerializer.h"
 
-btCollisionObject::btCollisionObject()
+btCollisionObject::btCollisionObject(btTransform* worldTransformBuffer)
 	:	m_interpolationLinearVelocity(0.f, 0.f, 0.f),
 		m_interpolationAngularVelocity(0.f, 0.f, 0.f),
 		m_anisotropicFriction(1.f,1.f,1.f),
@@ -47,10 +47,15 @@ btCollisionObject::btCollisionObject()
 		m_ccdSweptSphereRadius(btScalar(0.)),
 		m_ccdMotionThreshold(btScalar(0.)),
 		m_checkCollideWith(false),
-		m_updateRevision(0)
+		m_updateRevision(0),
+	    m_worldTransform(*worldTransformBuffer)
 {
 	m_worldTransform.setIdentity();
 	m_interpolationWorldTransform.setIdentity();
+}
+
+btCollisionObject::btCollisionObject() : btCollisionObject(&m_worldTransformBuffer)
+{
 }
 
 btCollisionObject::~btCollisionObject()

@@ -51,7 +51,8 @@ ATTRIBUTE_ALIGNED16(class)	btCollisionObject
 
 protected:
 
-	btTransform	m_worldTransform;
+	btTransform m_worldTransformBuffer;
+	btTransform& m_worldTransform;
 
 	///m_interpolationWorldTransform is used for CCD and interpolation
 	///it can be either previous or future (predicted) transform
@@ -213,7 +214,8 @@ public:
 		return (m_collisionFlags & CF_NO_CONTACT_RESPONSE)==0;
 	}
 
-	
+	btCollisionObject(btTransform* worldTransformBuffer);
+
 	btCollisionObject();
 
 	virtual ~btCollisionObject();

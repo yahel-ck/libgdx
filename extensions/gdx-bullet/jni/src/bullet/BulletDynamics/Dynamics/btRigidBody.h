@@ -174,6 +174,9 @@ public:
 		}
 	};
 
+	///btRigidBody constructor using construction info and an external worldTransform buffer.
+	btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, btTransform* worldTransformBuffer);
+
 	///btRigidBody constructor using construction info
 	btRigidBody(	const btRigidBodyConstructionInfo& constructionInfo);
 

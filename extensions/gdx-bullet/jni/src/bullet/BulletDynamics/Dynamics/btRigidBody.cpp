@@ -27,6 +27,11 @@ bool	gDisableDeactivation = false;
 static int uniqueId = 0;
 
 
+btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, btTransform* worldTransformBuffer) : btCollisionObject(worldTransformBuffer)
+{
+	setupRigidBody(constructionInfo);
+}
+
 btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo)
 {
 	setupRigidBody(constructionInfo);
