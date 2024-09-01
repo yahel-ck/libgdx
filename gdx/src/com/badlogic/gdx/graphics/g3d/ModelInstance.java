@@ -61,8 +61,8 @@ public class ModelInstance implements RenderableProvider {
 	public boolean isTransformInBullet3Format = false;
 	/** user definable value, which is passed to the {@link Shader}. */
 	public Object userData;
-	/** Instanced rendering data, may be null.
-	 * Used to implement instanced rendering (rendering multiple instances with one draw call). */
+	/** Instanced rendering data, may be null. Used to implement instanced rendering (rendering multiple instances with one draw
+	 * call). */
 	private InstanceData instances;
 
 	/** Constructs a new ModelInstance with all nodes and materials of the given model.
@@ -227,11 +227,11 @@ public class ModelInstance implements RenderableProvider {
 		return new ModelInstance(this);
 	}
 
-	public InstanceData getInstances() {
+	public InstanceData getInstances () {
 		return instances;
 	}
 
-	public void setInstances(InstanceData instances) {
+	public void setInstances (InstanceData instances) {
 		this.instances = instances;
 	}
 

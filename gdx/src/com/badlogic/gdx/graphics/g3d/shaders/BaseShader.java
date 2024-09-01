@@ -203,9 +203,8 @@ public abstract class BaseShader implements Shader {
 				final int location = program.getAttributeLocation(attr.alias);
 				if (location >= 0) attributes.put(attr.getKey(), location);
 			}
-			final VertexAttributes iattrs = renderable.instances != null ?
-					renderable.instances.getAttributes() :
-					renderable.meshPart.mesh.getInstancedAttributes();
+			final VertexAttributes iattrs = renderable.instances != null ? renderable.instances.getAttributes()
+				: renderable.meshPart.mesh.getInstancedAttributes();
 			if (iattrs != null) {
 				final int ic = iattrs.size();
 				for (int i = 0; i < ic; i++) {
@@ -274,16 +273,13 @@ public abstract class BaseShader implements Shader {
 			currentMesh = renderable.meshPart.mesh;
 			// currentInstances = instances;
 			// final VertexAttributes insAttrs = instances != null ? instances.getAttributes() : null;
-			currentMesh.bind(program, getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()),
-					null, null);
+			currentMesh.bind(program, getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()), null, null);
 		}
 
 		if (currentInstances != instances) {
-			if (currentInstances != null)
-				currentInstances.unbind(program, tempArray2.items);
+			if (currentInstances != null) currentInstances.unbind(program, tempArray2.items);
 			currentInstances = instances;
-			if (instances != null)
-				instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
+			if (instances != null) instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
 		}
 
 		renderable.meshPart.render(program, false, instances);
