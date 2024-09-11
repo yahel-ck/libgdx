@@ -168,6 +168,15 @@
         );
     }
 
+    void* createTransformsBuffer(const unsigned int count) {
+        return malloc(count * sizeof(btTransform));
+    }
+
+    jobject getByteBuffer(void* buffer, const unsigned int size) {
+        JNIEnv *env = JNU_GetEnv();
+        return env->NewDirectByteBuffer(buffer, size);
+    }
+
     void getInterpolationWorldTransform(btTransform & out) {
 		out = $self->getInterpolationWorldTransform();
 	}

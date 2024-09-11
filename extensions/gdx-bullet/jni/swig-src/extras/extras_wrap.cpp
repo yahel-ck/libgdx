@@ -132,7 +132,7 @@ template <typename T> T SwigValueInit() {
 
 /* calling conventions for Windows */
 #ifndef SWIGSTDCALL
-# if defined(_WIN32) || defined(__WIN32__)
+# if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 #   define SWIGSTDCALL __stdcall
 # else
 #   define SWIGSTDCALL

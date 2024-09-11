@@ -54,6 +54,8 @@ import com.badlogic.gdx.math.Matrix4;
 %}
 
 %{
+#ifndef CACHED_JVM_FLAG
+#define CACHED_JVM_FLAG
 #include <stdexcept>
 #include "jni.h"
 
@@ -73,6 +75,7 @@ static JNIEnv * JNU_GetEnv() {
     throw std::runtime_error("jni version not supported");
   return env;
 }
+#endif
 %}
 
 // Required because bullet uses a macro for this
