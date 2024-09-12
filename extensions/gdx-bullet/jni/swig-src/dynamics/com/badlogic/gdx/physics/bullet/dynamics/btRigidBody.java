@@ -73,8 +73,8 @@ public class btRigidBody extends btCollisionObject {
 		return result;
 	}
 
-	public btRigidBody (btRigidBodyConstructionInfo constructionInfo, final long worldTransformBufferAddress) {
-		this(false, constructionInfo, worldTransformBufferAddress);
+	public btRigidBody (btRigidBodyConstructionInfo constructionInfo, final java.nio.ByteBuffer worldTransformBuffer) {
+		this(false, constructionInfo, worldTransformBuffer);
 		refCollisionShape(constructionInfo.getCollisionShape());
 		refMotionState(constructionInfo.getMotionState());
 	}
@@ -674,9 +674,16 @@ public class btRigidBody extends btCollisionObject {
 		return DynamicsJNI.btRigidBody_getLocalInertia(swigCPtr, this);
 	}
 
-	private btRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo, long worldTransformBuffer) {
-		this(DynamicsJNI.new_btRigidBody__SWIG_1(dummy, btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
-			constructionInfo, worldTransformBuffer), true);
+	static private long SwigConstructbtRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo,
+		java.nio.ByteBuffer worldTransformBuffer) {
+		assert worldTransformBuffer.isDirect() : "Buffer must be allocated direct.";
+		return DynamicsJNI.new_btRigidBody__SWIG_1(dummy, btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
+			constructionInfo, worldTransformBuffer);
+	}
+
+	private btRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo,
+		java.nio.ByteBuffer worldTransformBuffer) {
+		this(btRigidBody.SwigConstructbtRigidBody(dummy, constructionInfo, worldTransformBuffer), true);
 	}
 
 	private btRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo) {

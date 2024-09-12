@@ -1884,7 +1884,7 @@ SWIGINTERN btRigidBody::btRigidBodyConstructionInfo *new_btRigidBody_btRigidBody
 	  };
 	};
 
-SWIGINTERN btRigidBody *new_btRigidBody__SWIG_1(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo,void *worldTransformBuffer){
+SWIGINTERN btRigidBody *new_btRigidBody__SWIG_1(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo,unsigned char *worldTransformBuffer){
 		return new btRigidBody(constructionInfo, (btTransform*) worldTransformBuffer);
 	}
 SWIGINTERN btRigidBody *new_btRigidBody__SWIG_2(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo){
@@ -4001,11 +4001,11 @@ SWIGEXPORT jobject JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_Dynamic
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jboolean jarg1, jlong jarg2, jobject jarg2_, jlong jarg3) {
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jboolean jarg1, jlong jarg2, jobject jarg2_, jobject jarg3) {
   jlong jresult = 0 ;
   bool arg1 ;
   btRigidBody::btRigidBodyConstructionInfo *arg2 = 0 ;
-  void *arg3 = (void *) 0 ;
+  unsigned char *arg3 = (unsigned char *) 0 ;
   btRigidBody *result = 0 ;
   
   (void)jenv;
@@ -4017,9 +4017,15 @@ SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJ
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "btRigidBody::btRigidBodyConstructionInfo const & reference is null");
     return 0;
   } 
-  arg3 = (void *)jarg3; 
+  {
+    arg3 = (unsigned char*)jenv->GetDirectBufferAddress(jarg3);
+    if (arg3 == NULL) {
+      SWIG_JavaThrowException(jenv, SWIG_JavaRuntimeException, "Unable to get address of direct buffer. Buffer must be allocated direct.");
+    }
+  }
   result = (btRigidBody *)new_btRigidBody__SWIG_1(arg1,(btRigidBody::btRigidBodyConstructionInfo const &)*arg2,arg3);
   *(btRigidBody **)&jresult = result; 
+  
   return jresult;
 }
 

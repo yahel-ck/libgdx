@@ -114,7 +114,7 @@
 %ignore btRigidBody::getCollisionShape;
 
 %extend btRigidBody {
-    btRigidBody(bool dummy, const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, void* worldTransformBuffer) {
+    btRigidBody(bool dummy, const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, unsigned char* worldTransformBuffer) {
 		return new btRigidBody(constructionInfo, (btTransform*) worldTransformBuffer);
 	}
 	btRigidBody(bool dummy, const btRigidBody::btRigidBodyConstructionInfo& constructionInfo) {
@@ -143,8 +143,8 @@
 		return result;
 	}
 
-    public btRigidBody(btRigidBodyConstructionInfo constructionInfo, final long worldTransformBufferAddress) {
-		this(false, constructionInfo, worldTransformBufferAddress);
+    public btRigidBody(btRigidBodyConstructionInfo constructionInfo, final java.nio.ByteBuffer worldTransformBuffer) {
+		this(false, constructionInfo, worldTransformBuffer);
 		refCollisionShape(constructionInfo.getCollisionShape());
 		refMotionState(constructionInfo.getMotionState());
 	}

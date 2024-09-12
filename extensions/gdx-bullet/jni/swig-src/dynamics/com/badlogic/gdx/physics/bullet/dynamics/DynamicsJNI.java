@@ -294,7 +294,7 @@ public class DynamicsJNI {
 	public final static native Vector3 btRigidBody_getLocalInertia (long jarg1, btRigidBody jarg1_);
 
 	public final static native long new_btRigidBody__SWIG_1 (boolean jarg1, long jarg2,
-		btRigidBody.btRigidBodyConstructionInfo jarg2_, long jarg3);
+		btRigidBody.btRigidBodyConstructionInfo jarg2_, java.nio.ByteBuffer jarg3);
 
 	public final static native long new_btRigidBody__SWIG_2 (boolean jarg1, long jarg2,
 		btRigidBody.btRigidBodyConstructionInfo jarg2_);

@@ -1889,13 +1889,6 @@ SWIGINTERN jobject btCollisionObject_getWorldTransformBuffer(btCollisionObject *
             sizeof(btTransform)
         );
     }
-SWIGINTERN void *btCollisionObject_createTransformsBuffer(btCollisionObject *self,unsigned int const count){
-        return malloc(count * sizeof(btTransform));
-    }
-SWIGINTERN jobject btCollisionObject_getByteBuffer(btCollisionObject *self,void *buffer,unsigned int const size){
-        JNIEnv *env = JNU_GetEnv();
-        return env->NewDirectByteBuffer(buffer, size);
-    }
 SWIGINTERN void btCollisionObject_getInterpolationWorldTransform__SWIG_2(btCollisionObject *self,btTransform &out){
 		out = self->getInterpolationWorldTransform();
 	}
@@ -30938,42 +30931,6 @@ SWIGEXPORT jobject JNICALL Java_com_badlogic_gdx_physics_bullet_collision_Collis
   (void)jarg1_;
   arg1 = *(btCollisionObject **)&jarg1; 
   result = btCollisionObject_getWorldTransformBuffer(arg1);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1createTransformsBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
-  jlong jresult = 0 ;
-  btCollisionObject *arg1 = (btCollisionObject *) 0 ;
-  unsigned int arg2 ;
-  void *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(btCollisionObject **)&jarg1; 
-  arg2 = (unsigned int)jarg2; 
-  result = (void *)btCollisionObject_createTransformsBuffer(arg1,arg2);
-  jresult = (jlong)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jobject JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1getByteBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
-  jobject jresult = 0 ;
-  btCollisionObject *arg1 = (btCollisionObject *) 0 ;
-  void *arg2 = (void *) 0 ;
-  unsigned int arg3 ;
-  jobject result;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(btCollisionObject **)&jarg1; 
-  arg2 = (void *)jarg2; 
-  arg3 = (unsigned int)jarg3; 
-  result = btCollisionObject_getByteBuffer(arg1,arg2,arg3);
   jresult = result; 
   return jresult;
 }

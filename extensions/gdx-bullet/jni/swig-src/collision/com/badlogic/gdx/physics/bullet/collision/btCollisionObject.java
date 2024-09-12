@@ -532,14 +532,6 @@ public class btCollisionObject extends BulletBase implements com.badlogic.gdx.ut
 		return CollisionJNI.btCollisionObject_getWorldTransformBuffer(swigCPtr, this);
 	}
 
-	public long createTransformsBuffer (long count) {
-		return CollisionJNI.btCollisionObject_createTransformsBuffer(swigCPtr, this, count);
-	}
-
-	public Object getByteBuffer (long buffer, long size) {
-		return CollisionJNI.btCollisionObject_getByteBuffer(swigCPtr, this, buffer, size);
-	}
-
 	public void getInterpolationWorldTransform (Matrix4 out) {
 		CollisionJNI.btCollisionObject_getInterpolationWorldTransform__SWIG_2(swigCPtr, this, out);
 	}
