@@ -132,7 +132,7 @@ template <typename T> T SwigValueInit() {
 
 /* calling conventions for Windows */
 #ifndef SWIGSTDCALL
-# if defined(_WIN32) || defined(__WIN32__)
+# if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 #   define SWIGSTDCALL __stdcall
 # else
 #   define SWIGSTDCALL
@@ -1884,10 +1884,13 @@ SWIGINTERN btRigidBody::btRigidBodyConstructionInfo *new_btRigidBody_btRigidBody
 	  };
 	};
 
-SWIGINTERN btRigidBody *new_btRigidBody__SWIG_0(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo){
+SWIGINTERN btRigidBody *new_btRigidBody__SWIG_1(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo,unsigned char *worldTransformBuffer){
+		return new btRigidBody(constructionInfo, (btTransform*) worldTransformBuffer);
+	}
+SWIGINTERN btRigidBody *new_btRigidBody__SWIG_2(bool dummy,btRigidBody::btRigidBodyConstructionInfo const &constructionInfo){
 		return new btRigidBody(constructionInfo);
 	}
-SWIGINTERN btRigidBody *new_btRigidBody__SWIG_1(bool dummy,btScalar mass,btMotionState *motionState,btCollisionShape *collisionShape,btVector3 const &localInertia=btVector3(0,0,0)){
+SWIGINTERN btRigidBody *new_btRigidBody__SWIG_3(bool dummy,btScalar mass,btMotionState *motionState,btCollisionShape *collisionShape,btVector3 const &localInertia=btVector3(0,0,0)){
 		return new btRigidBody(mass, motionState, collisionShape, localInertia);
 	}
 
@@ -2863,6 +2866,28 @@ SWIGEXPORT void JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJN
   (void)jcls;
   arg1 = *(btRigidBody::btRigidBodyConstructionInfo **)&jarg1; 
   delete arg1;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  jlong jresult = 0 ;
+  btRigidBody::btRigidBodyConstructionInfo *arg1 = 0 ;
+  btTransform *arg2 = (btTransform *) 0 ;
+  btRigidBody *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(btRigidBody::btRigidBodyConstructionInfo **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "btRigidBody::btRigidBodyConstructionInfo const & reference is null");
+    return 0;
+  } 
+  arg2 = *(btTransform **)&jarg2; 
+  result = (btRigidBody *)new btRigidBody((btRigidBody::btRigidBodyConstructionInfo const &)*arg1,arg2);
+  *(btRigidBody **)&jresult = result; 
+  return jresult;
 }
 
 
@@ -3976,7 +4001,36 @@ SWIGEXPORT jobject JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_Dynamic
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jboolean jarg1, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jboolean jarg1, jlong jarg2, jobject jarg2_, jobject jarg3) {
+  jlong jresult = 0 ;
+  bool arg1 ;
+  btRigidBody::btRigidBodyConstructionInfo *arg2 = 0 ;
+  unsigned char *arg3 = (unsigned char *) 0 ;
+  btRigidBody *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg2_;
+  arg1 = jarg1 ? true : false; 
+  arg2 = *(btRigidBody::btRigidBodyConstructionInfo **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "btRigidBody::btRigidBodyConstructionInfo const & reference is null");
+    return 0;
+  } 
+  {
+    arg3 = (unsigned char*)jenv->GetDirectBufferAddress(jarg3);
+    if (arg3 == NULL) {
+      SWIG_JavaThrowException(jenv, SWIG_JavaRuntimeException, "Unable to get address of direct buffer. Buffer must be allocated direct.");
+    }
+  }
+  result = (btRigidBody *)new_btRigidBody__SWIG_1(arg1,(btRigidBody::btRigidBodyConstructionInfo const &)*arg2,arg3);
+  *(btRigidBody **)&jresult = result; 
+  
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jboolean jarg1, jlong jarg2, jobject jarg2_) {
   jlong jresult = 0 ;
   bool arg1 ;
   btRigidBody::btRigidBodyConstructionInfo *arg2 = 0 ;
@@ -3991,13 +4045,13 @@ SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJ
     SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "btRigidBody::btRigidBodyConstructionInfo const & reference is null");
     return 0;
   } 
-  result = (btRigidBody *)new_btRigidBody__SWIG_0(arg1,(btRigidBody::btRigidBodyConstructionInfo const &)*arg2);
+  result = (btRigidBody *)new_btRigidBody__SWIG_2(arg1,(btRigidBody::btRigidBodyConstructionInfo const &)*arg2);
   *(btRigidBody **)&jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jboolean jarg1, jfloat jarg2, jlong jarg3, jobject jarg3_, jlong jarg4, jobject jarg4_, jobject jarg5) {
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jboolean jarg1, jfloat jarg2, jlong jarg3, jobject jarg3_, jlong jarg4, jobject jarg4_, jobject jarg5) {
   jlong jresult = 0 ;
   bool arg1 ;
   btScalar arg2 ;
@@ -4018,13 +4072,13 @@ SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJ
   gdx_setbtVector3FromVector3(jenv, local_arg5, jarg5);
   arg5 = &local_arg5;
   gdxAutoCommitVector3 auto_commit_arg5(jenv, jarg5, &local_arg5);
-  result = (btRigidBody *)new_btRigidBody__SWIG_1(arg1,arg2,arg3,arg4,(btVector3 const &)*arg5);
+  result = (btRigidBody *)new_btRigidBody__SWIG_3(arg1,arg2,arg3,arg4,(btVector3 const &)*arg5);
   *(btRigidBody **)&jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jboolean jarg1, jfloat jarg2, jlong jarg3, jobject jarg3_, jlong jarg4, jobject jarg4_) {
+SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJNI_new_1btRigidBody_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jboolean jarg1, jfloat jarg2, jlong jarg3, jobject jarg3_, jlong jarg4, jobject jarg4_) {
   jlong jresult = 0 ;
   bool arg1 ;
   btScalar arg2 ;
@@ -4040,7 +4094,7 @@ SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_dynamics_DynamicsJ
   arg2 = (btScalar)jarg2; 
   arg3 = *(btMotionState **)&jarg3; 
   arg4 = *(btCollisionShape **)&jarg4; 
-  result = (btRigidBody *)new_btRigidBody__SWIG_1(arg1,arg2,arg3,arg4);
+  result = (btRigidBody *)new_btRigidBody__SWIG_3(arg1,arg2,arg3,arg4);
   *(btRigidBody **)&jresult = result; 
   return jresult;
 }

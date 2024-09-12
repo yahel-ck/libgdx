@@ -73,6 +73,12 @@ public class btRigidBody extends btCollisionObject {
 		return result;
 	}
 
+	public btRigidBody (btRigidBodyConstructionInfo constructionInfo, final java.nio.ByteBuffer worldTransformBuffer) {
+		this(false, constructionInfo, worldTransformBuffer);
+		refCollisionShape(constructionInfo.getCollisionShape());
+		refMotionState(constructionInfo.getMotionState());
+	}
+
 	public btRigidBody (btRigidBodyConstructionInfo constructionInfo) {
 		this(false, constructionInfo);
 		refCollisionShape(constructionInfo.getCollisionShape());
@@ -380,6 +386,11 @@ public class btRigidBody extends btCollisionObject {
 
 	}
 
+	private btRigidBody (btRigidBody.btRigidBodyConstructionInfo constructionInfo, btTransform worldTransformBuffer) {
+		this(DynamicsJNI.new_btRigidBody__SWIG_0(btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
+			constructionInfo, btTransform.getCPtr(worldTransformBuffer), worldTransformBuffer), true);
+	}
+
 	public void proceedToTransform (Matrix4 newTrans) {
 		DynamicsJNI.btRigidBody_proceedToTransform(swigCPtr, this, newTrans);
 	}
@@ -663,19 +674,31 @@ public class btRigidBody extends btCollisionObject {
 		return DynamicsJNI.btRigidBody_getLocalInertia(swigCPtr, this);
 	}
 
+	static private long SwigConstructbtRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo,
+		java.nio.ByteBuffer worldTransformBuffer) {
+		assert worldTransformBuffer.isDirect() : "Buffer must be allocated direct.";
+		return DynamicsJNI.new_btRigidBody__SWIG_1(dummy, btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
+			constructionInfo, worldTransformBuffer);
+	}
+
+	private btRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo,
+		java.nio.ByteBuffer worldTransformBuffer) {
+		this(btRigidBody.SwigConstructbtRigidBody(dummy, constructionInfo, worldTransformBuffer), true);
+	}
+
 	private btRigidBody (boolean dummy, btRigidBody.btRigidBodyConstructionInfo constructionInfo) {
-		this(DynamicsJNI.new_btRigidBody__SWIG_0(dummy, btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
+		this(DynamicsJNI.new_btRigidBody__SWIG_2(dummy, btRigidBody.btRigidBodyConstructionInfo.getCPtr(constructionInfo),
 			constructionInfo), true);
 	}
 
 	private btRigidBody (boolean dummy, float mass, btMotionState motionState, btCollisionShape collisionShape,
 		Vector3 localInertia) {
-		this(DynamicsJNI.new_btRigidBody__SWIG_1(dummy, mass, btMotionState.getCPtr(motionState), motionState,
+		this(DynamicsJNI.new_btRigidBody__SWIG_3(dummy, mass, btMotionState.getCPtr(motionState), motionState,
 			btCollisionShape.getCPtr(collisionShape), collisionShape, localInertia), true);
 	}
 
 	private btRigidBody (boolean dummy, float mass, btMotionState motionState, btCollisionShape collisionShape) {
-		this(DynamicsJNI.new_btRigidBody__SWIG_2(dummy, mass, btMotionState.getCPtr(motionState), motionState,
+		this(DynamicsJNI.new_btRigidBody__SWIG_4(dummy, mass, btMotionState.getCPtr(motionState), motionState,
 			btCollisionShape.getCPtr(collisionShape), collisionShape), true);
 	}
 

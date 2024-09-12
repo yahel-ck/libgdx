@@ -114,6 +114,9 @@
 %ignore btRigidBody::getCollisionShape;
 
 %extend btRigidBody {
+    btRigidBody(bool dummy, const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, unsigned char* worldTransformBuffer) {
+		return new btRigidBody(constructionInfo, (btTransform*) worldTransformBuffer);
+	}
 	btRigidBody(bool dummy, const btRigidBody::btRigidBodyConstructionInfo& constructionInfo) {
 		return new btRigidBody(constructionInfo);
 	}
@@ -138,6 +141,12 @@
 		if (result == null)
 				result = new btRigidBody(swigCPtr, owner);
 		return result;
+	}
+
+    public btRigidBody(btRigidBodyConstructionInfo constructionInfo, final java.nio.ByteBuffer worldTransformBuffer) {
+		this(false, constructionInfo, worldTransformBuffer);
+		refCollisionShape(constructionInfo.getCollisionShape());
+		refMotionState(constructionInfo.getMotionState());
 	}
 
 	public btRigidBody(btRigidBodyConstructionInfo constructionInfo) {

@@ -140,6 +140,9 @@ public class DynamicsJNI {
 
 	public final static native void delete_btRigidBody_btRigidBodyConstructionInfo (long jarg1);
 
+	public final static native long new_btRigidBody__SWIG_0 (long jarg1, btRigidBody.btRigidBodyConstructionInfo jarg1_,
+		long jarg2, btTransform jarg2_);
+
 	public final static native void delete_btRigidBody (long jarg1);
 
 	public final static native void btRigidBody_proceedToTransform (long jarg1, btRigidBody jarg1_, Matrix4 jarg2);
@@ -290,13 +293,16 @@ public class DynamicsJNI {
 
 	public final static native Vector3 btRigidBody_getLocalInertia (long jarg1, btRigidBody jarg1_);
 
-	public final static native long new_btRigidBody__SWIG_0 (boolean jarg1, long jarg2,
+	public final static native long new_btRigidBody__SWIG_1 (boolean jarg1, long jarg2,
+		btRigidBody.btRigidBodyConstructionInfo jarg2_, java.nio.ByteBuffer jarg3);
+
+	public final static native long new_btRigidBody__SWIG_2 (boolean jarg1, long jarg2,
 		btRigidBody.btRigidBodyConstructionInfo jarg2_);
 
-	public final static native long new_btRigidBody__SWIG_1 (boolean jarg1, float jarg2, long jarg3, btMotionState jarg3_,
+	public final static native long new_btRigidBody__SWIG_3 (boolean jarg1, float jarg2, long jarg3, btMotionState jarg3_,
 		long jarg4, btCollisionShape jarg4_, Vector3 jarg5);
 
-	public final static native long new_btRigidBody__SWIG_2 (boolean jarg1, float jarg2, long jarg3, btMotionState jarg3_,
+	public final static native long new_btRigidBody__SWIG_4 (boolean jarg1, float jarg2, long jarg3, btMotionState jarg3_,
 		long jarg4, btCollisionShape jarg4_);
 
 	public final static native void btRigidBodyFloatData_collisionObjectData_set (long jarg1, btRigidBodyFloatData jarg1_,
