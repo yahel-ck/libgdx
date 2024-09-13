@@ -69,6 +69,13 @@ public class InstanceBufferObject implements InstanceData {
 	}
 
 	@Override
+	public void setNumInstances(int count) {
+		final int byteCount = attributes.vertexSize * count;
+		((Buffer)byteBuffer).limit(byteCount);
+		((Buffer)buffer).limit(byteCount / 4);
+	}
+
+	@Override
 	public int getNumMaxInstances () {
 		return byteBuffer.capacity() / attributes.vertexSize;
 	}
@@ -85,6 +92,12 @@ public class InstanceBufferObject implements InstanceData {
 	public FloatBuffer getBuffer (boolean forWriting) {
 		isDirty |= forWriting;
 		return buffer;
+	}
+
+	@Override
+	public ByteBuffer getByteBuffer (boolean forWriting) {
+		isDirty |= forWriting;
+		return byteBuffer;
 	}
 
 	/** Low level method to reset the buffer and attributes to the specified values. Use with care!

@@ -19,6 +19,7 @@ package com.badlogic.gdx.graphics.glutils;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.Disposable;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 /** A InstanceData instance holds instance data for rendering with OpenGL. It is implemented as either a
@@ -29,6 +30,13 @@ public interface InstanceData extends Disposable {
 
 	/** @return the number of vertices this InstanceData stores */
 	public int getNumInstances ();
+
+	/** Set how many instances should be drawn with this InstanceData.
+	 * Might cause unexpected behaviour if not all data is initialized up to the new count.
+	 *
+	 * @param count Number of instances that should be drawn. Attempting to set a count that is
+	 * greater than {@link InstanceData#getNumMaxInstances()} will cause an error on most/all implementations of InstanceData. */
+	public void setNumInstances (final int count);
 
 	/** @return the number of vertices this InstanceData can store */
 	public int getNumMaxInstances ();
@@ -85,6 +93,12 @@ public interface InstanceData extends Disposable {
 	 *           uploading use {@link #setInstanceData(float[], int, int)}.
 	 * @return the underlying FloatBuffer holding the vertex data. */
 	public FloatBuffer getBuffer (boolean forWriting);
+
+	/** Returns the underlying ByteBuffer (the actual data of the FloatBuffer) for reading or writing.
+	 * @param forWriting when true, the underlying buffer will be uploaded on the next call to bind. If you need immediate
+	 *           uploading use {@link #setInstanceData(float[], int, int)}.
+	 * @return the underlying ByteBuffer holding the vertex data. */
+	public ByteBuffer getByteBuffer (boolean forWriting);
 
 	/** Binds this InstanceData for rendering via glDrawArraysInstanced or glDrawElementsInstanced. */
 	public void bind (ShaderProgram shader);

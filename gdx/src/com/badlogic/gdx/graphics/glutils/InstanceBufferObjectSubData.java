@@ -91,6 +91,13 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		return buffer.limit() * 4 / attributes.vertexSize;
 	}
 
+	@Override
+	public void setNumInstances(int count) {
+		final int byteCount = attributes.vertexSize * count;
+		((Buffer)byteBuffer).limit(byteCount);
+		((Buffer)buffer).limit(byteCount / 4);
+	}
+
 	/** Effectively returns {@link #getNumMaxInstances()}.
 	 *
 	 * @return maximum number of instances in this buffer */
@@ -111,6 +118,12 @@ public class InstanceBufferObjectSubData implements InstanceData {
 	public FloatBuffer getBuffer (boolean forWriting) {
 		isDirty |= forWriting;
 		return buffer;
+	}
+
+	@Override
+	public ByteBuffer getByteBuffer(boolean forWriting) {
+		isDirty |= forWriting;
+		return byteBuffer;
 	}
 
 	private void bufferChanged () {
