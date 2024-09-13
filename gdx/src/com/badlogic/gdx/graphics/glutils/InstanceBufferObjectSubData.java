@@ -126,6 +126,25 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		return byteBuffer;
 	}
 
+	@Override
+	public ByteBuffer getInstanceSubBuffer(int instanceIndex, boolean forWriting) {
+		final int maxNumIns = getNumMaxInstances();
+		if (instanceIndex >= maxNumIns) {
+			throw new IndexOutOfBoundsException(String.format("Instance index %d is out of bound (max number of instances is %d)", instanceIndex, maxNumIns));
+		}
+
+		final int vertexSize = getAttributes().vertexSize;
+		final int originalPosition = byteBuffer.position();
+		final int originalLimit = byteBuffer.limit();
+		byteBuffer.position(vertexSize * instanceIndex);
+		byteBuffer.limit(vertexSize * instanceIndex + vertexSize);
+		final ByteBuffer slice =  byteBuffer.slice();
+		byteBuffer.position(originalPosition);
+		byteBuffer.limit(originalLimit);
+		isDirty |= forWriting;
+		return slice;
+	}
+
 	private void bufferChanged () {
 		if (isBound) {
 			Gdx.gl20.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), null, usage);

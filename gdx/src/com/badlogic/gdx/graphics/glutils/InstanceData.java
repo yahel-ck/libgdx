@@ -100,6 +100,9 @@ public interface InstanceData extends Disposable {
 	 * @return the underlying ByteBuffer holding the vertex data. */
 	public ByteBuffer getByteBuffer (boolean forWriting);
 
+	/** Creates a sub-buffer view for the specified instance's data. */
+	public ByteBuffer getInstanceSubBuffer (final int instanceIndex, final boolean forWriting);
+
 	/** Binds this InstanceData for rendering via glDrawArraysInstanced or glDrawElementsInstanced. */
 	public void bind (ShaderProgram shader);
 
