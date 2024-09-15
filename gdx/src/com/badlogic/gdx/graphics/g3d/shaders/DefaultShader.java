@@ -751,9 +751,8 @@ public class DefaultShader extends BaseShader {
 			prefix += "#define " + FloatAttribute.AlphaTestAlias + "Flag\n";
 		if (renderable.bones != null && config.numBones > 0) prefix += "#define numBones " + config.numBones + "\n";
 
-		final VertexAttributes instancedAttrs = renderable.instances != null ?
-				renderable.instances.getAttributes() :
-				renderable.meshPart.mesh.getInstancedAttributes();
+		final VertexAttributes instancedAttrs = renderable.instances != null ? renderable.instances.getAttributes()
+			: renderable.meshPart.mesh.getInstancedAttributes();
 		if (instancedAttrs != null) {
 			final int attrsCount = instancedAttrs.size();
 			for (int i = 0; i < attrsCount; i++) {
@@ -780,7 +779,7 @@ public class DefaultShader extends BaseShader {
 		return (attributesMask == (renderableMask | optionalAttributes))
 			&& (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked())
 			&& (renderable.environment != null) == lighting
-				&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
+			&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
 	}
 
 	@Override
