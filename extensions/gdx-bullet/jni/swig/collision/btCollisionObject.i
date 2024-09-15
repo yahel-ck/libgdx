@@ -132,6 +132,10 @@
 	}
 %}
 
+// Cast return type of getWorldTransformBuffer from jobject (Object) to ByteBuffer:
+%typemap(jtype) jobject getWorldTransformBuffer "java.nio.ByteBuffer"
+%typemap(jstype) jobject getWorldTransformBuffer "java.nio.ByteBuffer"
+
 %{
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <gdx/collision/GdxCollisionObjectBridge.h>
