@@ -3790,7 +3790,8 @@ public class CollisionJNI {
 	public final static native void btCollisionObject_getWorldTransform__SWIG_2 (long jarg1, btCollisionObject jarg1_,
 		Matrix4 jarg2);
 
-	public final static native Object btCollisionObject_getWorldTransformBuffer (long jarg1, btCollisionObject jarg1_);
+	public final static native java.nio.ByteBuffer btCollisionObject_getWorldTransformBuffer (long jarg1,
+		btCollisionObject jarg1_);
 
 	public final static native void btCollisionObject_getInterpolationWorldTransform__SWIG_2 (long jarg1, btCollisionObject jarg1_,
 		Matrix4 jarg2);
