@@ -13,8 +13,6 @@ import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 
-import java.nio.Buffer;
-
 public class btBulletWorldImporter extends btWorldImporter {
 	private long swigCPtr;
 
@@ -77,7 +75,7 @@ public class btBulletWorldImporter extends btWorldImporter {
 		if (len <= 0) throw new com.badlogic.gdx.utils.GdxRuntimeException("Incorrect file specified");
 		java.nio.ByteBuffer buff = com.badlogic.gdx.utils.BufferUtils.newUnsafeByteBuffer(len);
 		buff.put(fileHandle.readBytes());
-		((Buffer)buff).position(0);
+		((java.nio.Buffer)buff).position(0);
 		boolean result = loadFileFromMemory(buff, len);
 		com.badlogic.gdx.utils.BufferUtils.disposeUnsafeByteBuffer(buff);
 		return result;
