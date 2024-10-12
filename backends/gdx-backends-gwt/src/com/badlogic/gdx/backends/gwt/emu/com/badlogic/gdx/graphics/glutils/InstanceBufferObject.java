@@ -42,18 +42,14 @@ public class InstanceBufferObject implements InstanceData {
 	boolean isDirty = false;
 	boolean isBound = false;
 
-	/**
-	 * Allocates a new a buffer with a capacity for {@code numVertices} instances.
-	 * Instance count is set to 0 until {@link InstanceBufferObject#setInstanceData}/{@link InstanceBufferObject#setNumInstances} are called.
-	 */
+	/** Allocates a new a buffer with a capacity for {@code numVertices} instances. Instance count is set to 0 until
+	 * {@link InstanceBufferObject#setInstanceData}/{@link InstanceBufferObject#setNumInstances} are called. */
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttribute... attributes) {
 		this(isStatic, numVertices, new VertexAttributes(attributes));
 	}
 
-	/**
-	 * Allocates a new a buffer with a capacity for {@code numVertices} instances.
-	 * Instance count is set to 0 until {@link InstanceBufferObject#setInstanceData}/{@link InstanceBufferObject#setNumInstances} are called.
-	 */
+	/** Allocates a new a buffer with a capacity for {@code numVertices} instances. Instance count is set to 0 until
+	 * {@link InstanceBufferObject#setInstanceData}/{@link InstanceBufferObject#setNumInstances} are called. */
 	public InstanceBufferObject (boolean isStatic, int numVertices, VertexAttributes instanceAttributes) {
 		if (Gdx.gl30 == null)
 			throw new GdxRuntimeException("InstanceBufferObject requires a device running with GLES 3.0 compatibilty");
@@ -77,7 +73,7 @@ public class InstanceBufferObject implements InstanceData {
 	}
 
 	@Override
-	public void setNumInstances(int count) {
+	public void setNumInstances (int count) {
 		final int byteCount = attributes.vertexSize * count;
 		((Buffer)byteBuffer).limit(byteCount);
 		((Buffer)buffer).limit(byteCount / 4);
@@ -103,16 +99,17 @@ public class InstanceBufferObject implements InstanceData {
 	}
 
 	@Override
-	public ByteBuffer getByteBuffer(boolean forWriting) {
+	public ByteBuffer getByteBuffer (boolean forWriting) {
 		isDirty |= forWriting;
 		return byteBuffer;
 	}
 
 	@Override
-	public ByteBuffer getInstanceSubBuffer(int instanceIndex, boolean forWriting) {
+	public ByteBuffer getInstanceSubBuffer (int instanceIndex, boolean forWriting) {
 		final int maxNumIns = getNumMaxInstances();
 		if (instanceIndex >= maxNumIns) {
-			throw new IndexOutOfBoundsException(String.format("Instance index %d is out of bound (max number of instances is %d)", instanceIndex, maxNumIns));
+			throw new IndexOutOfBoundsException(
+				String.format("Instance index %d is out of bound (max number of instances is %d)", instanceIndex, maxNumIns));
 		}
 
 		final int vertexSize = getAttributes().vertexSize;
@@ -120,7 +117,7 @@ public class InstanceBufferObject implements InstanceData {
 		final int originalLimit = byteBuffer.limit();
 		byteBuffer.position(vertexSize * instanceIndex);
 		byteBuffer.limit(vertexSize * instanceIndex + vertexSize);
-		final ByteBuffer slice =  byteBuffer.slice();
+		final ByteBuffer slice = byteBuffer.slice();
 		byteBuffer.position(originalPosition);
 		byteBuffer.limit(originalLimit);
 		isDirty |= forWriting;

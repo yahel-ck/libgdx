@@ -31,11 +31,11 @@ public interface InstanceData extends Disposable {
 	/** @return the number of vertices this InstanceData stores */
 	public int getNumInstances ();
 
-	/** Set how many instances should be drawn with this InstanceData.
-	 * Might cause unexpected behaviour if not all data is initialized up to the new count.
+	/** Set how many instances should be drawn with this InstanceData. Might cause unexpected behaviour if not all data is
+	 * initialized up to the new count.
 	 *
-	 * @param count Number of instances that should be drawn. Attempting to set a count that is
-	 * greater than {@link InstanceData#getNumMaxInstances()} will cause an error on most/all implementations of InstanceData. */
+	 * @param count Number of instances that should be drawn. Attempting to set a count that is greater than
+	 *           {@link InstanceData#getNumMaxInstances()} will cause an error on most/all implementations of InstanceData. */
 	public void setNumInstances (final int count);
 
 	/** @return the number of vertices this InstanceData can store */
