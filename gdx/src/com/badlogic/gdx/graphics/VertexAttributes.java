@@ -51,6 +51,12 @@ public final class VertexAttributes implements Iterable<VertexAttribute>, Compar
 	/** cache of the value calculated by {@link #getMask()} **/
 	private long mask = -1;
 
+	/** cache of the value calculated by {@link #getDepthMaskWithSizePacked()} ()} **/
+	private long depthMask = -1;
+
+	/** cache of the number of vertex attributes that are relevant for rendering depth (Position, BoneWeight) */
+	private int depthAttributesCount = -1;
+
 	/** cache for bone weight units. */
 	private int boneWeightUnits = -1;
 
@@ -173,6 +179,38 @@ public final class VertexAttributes implements Iterable<VertexAttribute>, Compar
 	 * @return the mask with attributes count packed into the last 32 bits. */
 	public long getMaskWithSizePacked () {
 		return getMask() | ((long)attributes.length << 32);
+	}
+
+	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data.
+	 * The mask is a bit-wise-or of each attribute's {@link VertexAttribute#usage}.
+	 * This mask contains only attributes that are relevant for depth rendering (Position, BoneWeight).
+	 * @return the mask */
+	public long getDepthMask () {
+		if (depthMask == -1) {
+			int size = 0;
+			long result = 0;
+			for (int i = 0; i < attributes.length; i++) {
+				if (attributes[i].usage == Usage.Position || attributes[i].usage == Usage.BoneWeight) {
+					result |= attributes[i].usage;
+					size += 1;
+				}
+			}
+			depthAttributesCount = size;
+			depthMask = result;
+		}
+		return depthMask;
+	}
+
+	/** Calculates the mask based on {@link VertexAttributes#getDepthMask()} and packs the attributes count into the
+	 * last 32 bits. This mask contains only attributes that are relevant for depth rendering (Position, BoneWeight).
+	 * @return the mask with attributes count packed into the last 32 bits. */
+	public long getDepthMaskWithSizePacked () {
+		return getDepthMask() | ((long)depthAttributesCount << 32);
+	}
+
+	public int getDepthAttributesCount() {
+		if (depthAttributesCount == -1) getDepthMask();
+		return depthAttributesCount;
 	}
 
 	/** @return Number of bone weights based on {@link VertexAttribute#unit} */

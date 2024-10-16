@@ -147,4 +147,19 @@ public class Renderable {
 			return attrs.getMaskWithSizePacked();
 		}
 	}
+
+	/** Calculates the mask based on {@link VertexAttributes#getMask()} and packs the attributes count into the last 32 bits.
+	 * Combines the instanced attributes as well if there are any.
+	 * @return the mask with attributes count packed into the last 32 bits. */
+	public long getDepthVertexAttributesMaskWithSizePacked() {
+		final InstanceData instances = getInstances();
+		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
+		if (instances != null) {
+			final VertexAttributes insAttrs = instances.getAttributes();
+			final long size = attrs.getDepthAttributesCount() + insAttrs.getDepthAttributesCount();
+			return attrs.getMask() | insAttrs.getMask() | (size << 32);
+		} else {
+			return attrs.getMaskWithSizePacked();
+		}
+	}
 }

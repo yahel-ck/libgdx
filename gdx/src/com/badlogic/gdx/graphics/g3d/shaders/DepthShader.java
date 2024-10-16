@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,6 +67,7 @@ public class DepthShader extends DefaultShader {
 
 	public final int numBones;
 	private final FloatAttribute alphaTestAttribute;
+	private final long depthVertexMask;
 
 	public DepthShader (final Renderable renderable) {
 		this(renderable, new Config());
@@ -89,6 +90,8 @@ public class DepthShader extends DefaultShader {
 	public DepthShader (final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
 		super(renderable, config, shaderProgram);
 		final Attributes attributes = combineAttributes(renderable);
+
+		depthVertexMask = renderable.getDepthVertexAttributesMaskWithSizePacked();
 
 		if (renderable.bones != null && renderable.bones.length > config.numBones) {
 			throw new GdxRuntimeException("too many bones: " + renderable.bones.length + ", max configured: " + config.numBones);
@@ -117,6 +120,7 @@ public class DepthShader extends DefaultShader {
 
 	@Override
 	public boolean canRender (Renderable renderable) {
+		if (renderable.getDepthVertexAttributesMaskWithSizePacked() != depthVertexMask) return false;
 		if (renderable.bones != null) {
 			if (renderable.bones.length > config.numBones) return false;
 			if (renderable.meshPart.mesh.getVertexAttributes().getBoneWeights() > config.numBoneWeights) return false;
