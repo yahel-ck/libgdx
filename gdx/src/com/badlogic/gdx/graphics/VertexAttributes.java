@@ -181,9 +181,9 @@ public final class VertexAttributes implements Iterable<VertexAttribute>, Compar
 		return getMask() | ((long)attributes.length << 32);
 	}
 
-	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data.
-	 * The mask is a bit-wise-or of each attribute's {@link VertexAttribute#usage}.
-	 * This mask contains only attributes that are relevant for depth rendering (Position, BoneWeight).
+	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data. The mask is a bit-wise-or of
+	 * each attribute's {@link VertexAttribute#usage}. This mask contains only attributes that are relevant for depth rendering
+	 * (Position, BoneWeight).
 	 * @return the mask */
 	public long getDepthMask () {
 		if (depthMask == -1) {
@@ -201,14 +201,14 @@ public final class VertexAttributes implements Iterable<VertexAttribute>, Compar
 		return depthMask;
 	}
 
-	/** Calculates the mask based on {@link VertexAttributes#getDepthMask()} and packs the attributes count into the
-	 * last 32 bits. This mask contains only attributes that are relevant for depth rendering (Position, BoneWeight).
+	/** Calculates the mask based on {@link VertexAttributes#getDepthMask()} and packs the attributes count into the last 32 bits.
+	 * This mask contains only attributes that are relevant for depth rendering (Position, BoneWeight).
 	 * @return the mask with attributes count packed into the last 32 bits. */
 	public long getDepthMaskWithSizePacked () {
 		return getDepthMask() | ((long)depthAttributesCount << 32);
 	}
 
-	public int getDepthAttributesCount() {
+	public int getDepthAttributesCount () {
 		if (depthAttributesCount == -1) getDepthMask();
 		return depthAttributesCount;
 	}

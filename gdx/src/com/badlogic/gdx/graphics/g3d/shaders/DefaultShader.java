@@ -777,8 +777,7 @@ public class DefaultShader extends BaseShader {
 		if (renderable.meshPart.mesh.getVertexAttributes().getTextureCoordinates() != textureCoordinates) return false;
 		final long renderableMask = combineAttributeMasks(renderable);
 		return (attributesMask == (renderableMask | optionalAttributes))
-			&& (vertexMask == renderable.getVertexAttributesMaskWithSizePacked())
-			&& (renderable.environment != null) == lighting
+			&& (vertexMask == renderable.getVertexAttributesMaskWithSizePacked()) && (renderable.environment != null) == lighting
 			&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
 	}
 

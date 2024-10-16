@@ -115,14 +115,14 @@ public class Renderable {
 		return this;
 	}
 
-	public InstanceData getInstances() {
+	public InstanceData getInstances () {
 		return instances != null ? instances : meshPart.mesh.instances;
 	}
 
 	/** Calculates the mask based on {@link VertexAttributes#getMask()} and packs the attributes count into the last 32 bits.
 	 * Combines the instanced attributes as well if there are any.
 	 * @return the mask with attributes count packed into the last 32 bits. */
-	public long getVertexAttributesMaskWithSizePacked() {
+	public long getVertexAttributesMaskWithSizePacked () {
 		final InstanceData instances = getInstances();
 		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
 		if (instances != null) {
@@ -134,10 +134,10 @@ public class Renderable {
 		}
 	}
 
-	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data.
-	 * The mask is a bit-wise-or of each attribute's {@link VertexAttribute#usage}.
+	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data. The mask is a bit-wise-or of
+	 * each attribute's {@link VertexAttribute#usage}.
 	 * @return the mask */
-	public long getVertexAttributesMask() {
+	public long getVertexAttributesMask () {
 		final InstanceData instances = getInstances();
 		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
 		if (instances != null) {
@@ -151,7 +151,7 @@ public class Renderable {
 	/** Calculates the mask based on {@link VertexAttributes#getMask()} and packs the attributes count into the last 32 bits.
 	 * Combines the instanced attributes as well if there are any.
 	 * @return the mask with attributes count packed into the last 32 bits. */
-	public long getDepthVertexAttributesMaskWithSizePacked() {
+	public long getDepthVertexAttributesMaskWithSizePacked () {
 		final InstanceData instances = getInstances();
 		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
 		if (instances != null) {
