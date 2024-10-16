@@ -542,7 +542,7 @@ public class DefaultShader extends BaseShader {
 		this.shadowMap = lighting && renderable.environment.shadowMap != null;
 		this.renderable = renderable;
 		attributesMask = attributes.getMask() | optionalAttributes;
-		vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked();
+		vertexMask = renderable.getVertexAttributesMaskWithSizePacked();
 		textureCoordinates = renderable.meshPart.mesh.getVertexAttributes().getTextureCoordinates();
 
 		this.directionalLights = new DirectionalLight[lighting && config.numDirectionalLights > 0 ? config.numDirectionalLights
@@ -681,7 +681,7 @@ public class DefaultShader extends BaseShader {
 		final Attributes attributes = combineAttributes(renderable);
 		String prefix = "";
 		final long attributesMask = attributes.getMask();
-		final long vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMask();
+		final long vertexMask = renderable.getVertexAttributesMask();
 		if (and(vertexMask, Usage.Position)) prefix += "#define positionFlag\n";
 		if (or(vertexMask, Usage.ColorUnpacked | Usage.ColorPacked)) prefix += "#define colorFlag\n";
 		if (and(vertexMask, Usage.BiNormal)) prefix += "#define binormalFlag\n";
@@ -777,7 +777,7 @@ public class DefaultShader extends BaseShader {
 		if (renderable.meshPart.mesh.getVertexAttributes().getTextureCoordinates() != textureCoordinates) return false;
 		final long renderableMask = combineAttributeMasks(renderable);
 		return (attributesMask == (renderableMask | optionalAttributes))
-			&& (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked())
+			&& (vertexMask == renderable.getVertexAttributesMaskWithSizePacked())
 			&& (renderable.environment != null) == lighting
 			&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
 	}

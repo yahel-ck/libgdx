@@ -17,6 +17,8 @@
 package com.badlogic.gdx.graphics.g3d;
 
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.InstanceData;
@@ -111,5 +113,38 @@ public class Renderable {
 		userData = renderable.userData;
 		instances = renderable.instances;
 		return this;
+	}
+
+	public InstanceData getInstances() {
+		return instances != null ? instances : meshPart.mesh.instances;
+	}
+
+	/** Calculates the mask based on {@link VertexAttributes#getMask()} and packs the attributes count into the last 32 bits.
+	 * Combines the instanced attributes as well if there are any.
+	 * @return the mask with attributes count packed into the last 32 bits. */
+	public long getVertexAttributesMaskWithSizePacked() {
+		final InstanceData instances = getInstances();
+		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
+		if (instances != null) {
+			final VertexAttributes insAttrs = instances.getAttributes();
+			final long size = attrs.size() + insAttrs.size();
+			return attrs.getMask() | insAttrs.getMask() | (size << 32);
+		} else {
+			return attrs.getMaskWithSizePacked();
+		}
+	}
+
+	/** Calculates a mask based on the {@link VertexAttributes} of the mesh and the instanced data.
+	 * The mask is a bit-wise-or of each attribute's {@link VertexAttribute#usage}.
+	 * @return the mask */
+	public long getVertexAttributesMask() {
+		final InstanceData instances = getInstances();
+		final VertexAttributes attrs = meshPart.mesh.getVertexAttributes();
+		if (instances != null) {
+			final VertexAttributes insAttrs = instances.getAttributes();
+			return attrs.getMask() | insAttrs.getMask();
+		} else {
+			return attrs.getMaskWithSizePacked();
+		}
 	}
 }
