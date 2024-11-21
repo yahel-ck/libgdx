@@ -310,12 +310,12 @@ public class InstanceBufferObject implements InstanceData {
 	}
 
 	@Override
-	public BoundingBox getBoundingBox() {
+	public BoundingBox getBoundingBox () {
 		return boundingBox;
 	}
 
 	@Override
-	public void setBoundingBox(BoundingBox bb) {
+	public void setBoundingBox (BoundingBox bb) {
 		this.boundingBox = bb;
 	}
 }

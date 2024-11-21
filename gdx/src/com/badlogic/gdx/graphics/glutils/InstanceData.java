@@ -126,7 +126,7 @@ public interface InstanceData extends Disposable {
 	/** Disposes this InstanceData and all its associated OpenGL resources. */
 	public void dispose ();
 
-	public BoundingBox getBoundingBox();
+	public BoundingBox getBoundingBox ();
 
-	public void setBoundingBox(BoundingBox bb);
+	public void setBoundingBox (BoundingBox bb);
 }

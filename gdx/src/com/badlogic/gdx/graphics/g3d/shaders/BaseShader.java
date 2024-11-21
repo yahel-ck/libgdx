@@ -273,10 +273,7 @@ public abstract class BaseShader implements Shader {
 				currentMesh.unbind(program, tempArray.items, null, null);
 			}
 			currentMesh = renderable.meshPart.mesh;
-			currentMesh.bind(program,
-					getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()),
-					null,
-					null);
+			currentMesh.bind(program, getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()), null, null);
 		}
 
 		if (renderable.instances != null) {
@@ -292,14 +289,11 @@ public abstract class BaseShader implements Shader {
 		if (currentInstances != instances) {
 			if (instances != null) {
 				final BoundingBox bb = instances.getBoundingBox();
-				if (bb != null && !camera.frustum.boundsInFrustum(bb))
-					return;
+				if (bb != null && !camera.frustum.boundsInFrustum(bb)) return;
 			}
-			if (currentInstances != null)
-				currentInstances.unbind(program, tempArray2.items);
+			if (currentInstances != null) currentInstances.unbind(program, tempArray2.items);
 			currentInstances = instances;
-			if (instances != null)
-				instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
+			if (instances != null) instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
 		}
 		meshPart.render(program, false, instances);
 	}

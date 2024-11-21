@@ -122,7 +122,7 @@ public class Renderable {
 	}
 
 	@Null
-	public VertexAttributes getInstancedAttributes() {
+	public VertexAttributes getInstancedAttributes () {
 		final InstanceData instances = getInstances();
 		return instances == null ? null : instances.getAttributes();
 	}
