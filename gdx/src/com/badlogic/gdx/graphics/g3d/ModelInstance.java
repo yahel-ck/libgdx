@@ -63,7 +63,7 @@ public class ModelInstance implements RenderableProvider {
 	public Object userData;
 	/** Instanced rendering data, may be null. Used to implement instanced rendering (rendering multiple instances with one draw
 	 * call). */
-	private InstanceData instances;
+	private Array<InstanceData> instances;
 
 	/** Constructs a new ModelInstance with all nodes and materials of the given model.
 	 * @param model The {@link Model} to create an instance of. */
@@ -227,11 +227,11 @@ public class ModelInstance implements RenderableProvider {
 		return new ModelInstance(this);
 	}
 
-	public InstanceData getInstances () {
+	public Array<InstanceData> getInstances () {
 		return instances;
 	}
 
-	public void setInstances (InstanceData instances) {
+	public void setInstances (Array<InstanceData> instances) {
 		this.instances = instances;
 	}
 

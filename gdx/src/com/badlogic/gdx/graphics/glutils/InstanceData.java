@@ -17,6 +17,7 @@
 package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.nio.ByteBuffer;
@@ -124,4 +125,8 @@ public interface InstanceData extends Disposable {
 
 	/** Disposes this InstanceData and all its associated OpenGL resources. */
 	public void dispose ();
+
+	public BoundingBox getBoundingBox();
+
+	public void setBoundingBox(BoundingBox bb);
 }

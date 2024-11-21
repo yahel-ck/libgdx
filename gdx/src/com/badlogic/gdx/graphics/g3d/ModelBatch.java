@@ -55,6 +55,8 @@ public class ModelBatch implements Disposable {
 			renderable.meshPart.set("", null, 0, 0, 0);
 			renderable.shader = null;
 			renderable.userData = null;
+			renderable.isTransformInBullet3Format = false;
+			renderable.instances = null;
 			return renderable;
 		}
 	}

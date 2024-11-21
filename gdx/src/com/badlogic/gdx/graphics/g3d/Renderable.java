@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.InstanceData;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pool;
 
 import java.nio.FloatBuffer;
@@ -100,7 +101,7 @@ public class Renderable {
 	public Object userData;
 	/** Instanced rendering data, may be null. Used to implement instanced rendering (rendering multiple instances with one draw
 	 * call). */
-	public InstanceData instances;
+	public Array<InstanceData> instances;
 	public boolean isTransformInBullet3Format = false;
 
 	public Renderable set (Renderable renderable) {
@@ -115,8 +116,15 @@ public class Renderable {
 		return this;
 	}
 
+	@Null
 	public InstanceData getInstances () {
-		return instances != null ? instances : meshPart.mesh.instances;
+		return instances != null && instances.size > 0 ? instances.get(0) : meshPart.mesh.instances;
+	}
+
+	@Null
+	public VertexAttributes getInstancedAttributes() {
+		final InstanceData instances = getInstances();
+		return instances == null ? null : instances.getAttributes();
 	}
 
 	/** Calculates the mask based on {@link VertexAttributes#getMask()} and packs the attributes count into the last 32 bits.

@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.g3d.utils.TextureDescriptor;
 import com.badlogic.gdx.graphics.glutils.InstanceData;
@@ -33,6 +34,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
@@ -203,8 +205,7 @@ public abstract class BaseShader implements Shader {
 				final int location = program.getAttributeLocation(attr.alias);
 				if (location >= 0) attributes.put(attr.getKey(), location);
 			}
-			final VertexAttributes iattrs = renderable.instances != null ? renderable.instances.getAttributes()
-				: renderable.meshPart.mesh.getInstancedAttributes();
+			final VertexAttributes iattrs = renderable.getInstancedAttributes();
 			if (iattrs != null) {
 				final int ic = iattrs.size();
 				for (int i = 0; i < ic; i++) {
@@ -267,22 +268,40 @@ public abstract class BaseShader implements Shader {
 		for (int u, i = 0; i < localUniforms.size; ++i)
 			if (setters.get(u = localUniforms.get(i)) != null) setters.get(u).set(this, u, renderable, combinedAttributes);
 
-		final InstanceData instances = renderable.instances != null ? renderable.instances : renderable.meshPart.mesh.instances;
-		if (currentMesh != renderable.meshPart.mesh) { // || renderable.instances != null) {
-			if (currentMesh != null) currentMesh.unbind(program, tempArray.items, null, null);
+		if (currentMesh != renderable.meshPart.mesh) {
+			if (currentMesh != null) {
+				currentMesh.unbind(program, tempArray.items, null, null);
+			}
 			currentMesh = renderable.meshPart.mesh;
-			// currentInstances = instances;
-			// final VertexAttributes insAttrs = instances != null ? instances.getAttributes() : null;
-			currentMesh.bind(program, getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()), null, null);
+			currentMesh.bind(program,
+					getAttributeLocations(renderable.meshPart.mesh.getVertexAttributes()),
+					null,
+					null);
 		}
 
+		if (renderable.instances != null) {
+			for (InstanceData ins : renderable.instances)
+				render(renderable.meshPart, ins);
+		} else {
+			render(renderable.meshPart, renderable.meshPart.mesh.instances);
+		}
+	}
+
+	/** Render given MeshPart with given InstanceData, assuming the Mesh is already bound. */
+	protected void render (MeshPart meshPart, InstanceData instances) {
 		if (currentInstances != instances) {
-			if (currentInstances != null) currentInstances.unbind(program, tempArray2.items);
+			if (instances != null) {
+				final BoundingBox bb = instances.getBoundingBox();
+				if (bb != null && !camera.frustum.boundsInFrustum(bb))
+					return;
+			}
+			if (currentInstances != null)
+				currentInstances.unbind(program, tempArray2.items);
 			currentInstances = instances;
-			if (instances != null) instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
+			if (instances != null)
+				instances.bind(program, getInstancedAttributeLocations(instances.getAttributes()));
 		}
-
-		renderable.meshPart.render(program, false, instances);
+		meshPart.render(program, false, instances);
 	}
 
 	@Override

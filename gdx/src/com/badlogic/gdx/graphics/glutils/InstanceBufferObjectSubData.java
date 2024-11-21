@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -42,6 +43,7 @@ public class InstanceBufferObjectSubData implements InstanceData {
 	final int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
+	BoundingBox boundingBox;
 
 	/** Constructs a new interleaved InstanceBufferObject.
 	 *
@@ -320,5 +322,15 @@ public class InstanceBufferObjectSubData implements InstanceData {
 	 * @return the InstanceBufferObject handle */
 	public int getBufferHandle () {
 		return bufferHandle;
+	}
+
+	@Override
+	public BoundingBox getBoundingBox() {
+		return boundingBox;
+	}
+
+	@Override
+	public void setBoundingBox(BoundingBox bb) {
+		this.boundingBox = bb;
 	}
 }

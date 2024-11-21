@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -41,6 +42,7 @@ public class InstanceBufferObject implements InstanceData {
 	private int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
+	BoundingBox boundingBox;
 
 	/** Allocates a new a buffer with a capacity for {@code numVertices} instances. Instance count is set to 0 until
 	 * {@link InstanceBufferObject#setInstanceData}/{@link InstanceBufferObject#setNumInstances} are called. */
@@ -303,5 +305,15 @@ public class InstanceBufferObject implements InstanceData {
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
 		gl.glDeleteBuffer(bufferHandle);
 		bufferHandle = 0;
+	}
+
+	@Override
+	public BoundingBox getBoundingBox() {
+		return boundingBox;
+	}
+
+	@Override
+	public void setBoundingBox(BoundingBox bb) {
+		this.boundingBox = bb;
 	}
 }
