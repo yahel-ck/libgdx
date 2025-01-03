@@ -74,6 +74,20 @@ import java.nio.FloatBuffer;
  * </p>
  * @author badlogic, xoppa */
 public class Renderable {
+	public enum TransformFormat {
+		OpenGLMatrix4(0), BulletMatrix4(1), QuaternionPositionPair(2);
+
+		private final int id;
+
+		TransformFormat (int id) {
+			this.id = id;
+		}
+
+		public int getId () {
+			return id;
+		}
+	}
+
 	/** Used to specify the transformations (like translation, scale and rotation) to apply to the shape. In other words: it is
 	 * used to transform the vertices from model space into world space. **/
 	public final Matrix4 worldTransform = new Matrix4();
@@ -101,7 +115,7 @@ public class Renderable {
 	/** Instanced rendering data, may be null. Used to implement instanced rendering (rendering multiple instances with one draw
 	 * call). */
 	public InstanceData instances;
-	public boolean isTransformInBullet3Format = false;
+	public int transformFormat = TransformFormat.OpenGLMatrix4.getId();
 
 	public Renderable set (Renderable renderable) {
 		worldTransform.set(renderable.worldTransform);

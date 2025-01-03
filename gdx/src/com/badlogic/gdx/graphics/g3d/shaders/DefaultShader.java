@@ -22,21 +22,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Attribute;
-import com.badlogic.gdx.graphics.g3d.Attributes;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.Shader;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.DirectionalLightsAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.attributes.*;
 import com.badlogic.gdx.graphics.g3d.environment.AmbientCubemap;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
@@ -509,7 +496,7 @@ public class DefaultShader extends BaseShader {
 	private final long vertexMask;
 	private final int textureCoordinates;
 	private int[] boneWeightsLocations;
-	private boolean isTransformInBullet3Format;
+	private final int transformFormat;
 	protected final Config config;
 	/** Attributes which are not required but always supported. */
 	private final static long optionalAttributes = IntAttribute.CullFace | DepthTestAttribute.Type;
@@ -570,7 +557,7 @@ public class DefaultShader extends BaseShader {
 		if (renderable.bones != null) {
 			boneWeightsLocations = new int[config.numBoneWeights];
 		}
-		this.isTransformInBullet3Format = renderable.isTransformInBullet3Format;
+		this.transformFormat = renderable.transformFormat;
 
 		// Global uniforms
 		u_projTrans = register(Inputs.projTrans, Setters.projTrans);
@@ -761,9 +748,7 @@ public class DefaultShader extends BaseShader {
 			}
 		}
 
-		if (renderable.isTransformInBullet3Format) {
-			prefix += "#define a_worldTrans_bullet3FormatFlag\n";
-		}
+		prefix += "#define transformFormat " + renderable.transformFormat + "\n";
 
 		return prefix;
 	}
@@ -778,7 +763,7 @@ public class DefaultShader extends BaseShader {
 		final long renderableMask = combineAttributeMasks(renderable);
 		return (attributesMask == (renderableMask | optionalAttributes))
 			&& (vertexMask == renderable.getVertexAttributesMaskWithSizePacked()) && (renderable.environment != null) == lighting
-			&& renderable.isTransformInBullet3Format == this.isTransformInBullet3Format;
+			&& renderable.transformFormat == this.transformFormat;
 	}
 
 	@Override

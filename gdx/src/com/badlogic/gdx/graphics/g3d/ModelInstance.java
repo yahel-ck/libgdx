@@ -58,7 +58,7 @@ public class ModelInstance implements RenderableProvider {
 	public Matrix4 transform;
 	/** Optional buffer with transform data to be used instead of the transform matrix. */
 	public FloatBuffer transformBuffer;
-	public boolean isTransformInBullet3Format = false;
+	public int transformFormat = Renderable.TransformFormat.OpenGLMatrix4.getId();
 	/** user definable value, which is passed to the {@link Shader}. */
 	public Object userData;
 	/** Instanced rendering data, may be null. Used to implement instanced rendering (rendering multiple instances with one draw
@@ -399,7 +399,7 @@ public class ModelInstance implements RenderableProvider {
 		}
 		out.userData = userData;
 		out.instances = getInstances();
-		out.isTransformInBullet3Format = isTransformInBullet3Format;
+		out.transformFormat = transformFormat;
 		return out;
 	}
 
