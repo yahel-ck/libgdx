@@ -158,7 +158,7 @@ public class Renderable {
 			final VertexAttributes insAttrs = instances.getAttributes();
 			return attrs.getMask() | insAttrs.getMask();
 		} else {
-			return attrs.getMaskWithSizePacked();
+			return attrs.getMask();
 		}
 	}
 
