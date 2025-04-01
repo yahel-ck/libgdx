@@ -19,6 +19,7 @@ package com.badlogic.gdx.graphics.g3d.shaders;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
@@ -41,6 +42,23 @@ public class DepthShader extends DefaultShader {
 		public Config (String vertexShader, String fragmentShader) {
 			super(vertexShader, fragmentShader);
 		}
+	}
+
+	/** Bit-map mask of VertexAttributes.Usage flags that are relevant for depth rendering.
+	 * Used to identify whether a depth shader can render a certain renderable. */
+	private static long depthAttributeMask = VertexAttributes.Usage.Position | VertexAttributes.Usage.BoneWeight;
+
+	public static long getDepthAttributeMask() {
+		return depthAttributeMask;
+	}
+
+	public static void setDepthAttributeMask(long depthAttributeMask) {
+		DepthShader.depthAttributeMask = depthAttributeMask;
+	}
+
+	/** Bitwise-or the given mask to the current depth attribute mask. */
+	public static void addDepthAttributesToMask(long orDepthAttributeMask) {
+		setDepthAttributeMask(getDepthAttributeMask() | orDepthAttributeMask);
 	}
 
 	private static String defaultVertexShader = null;
@@ -67,7 +85,7 @@ public class DepthShader extends DefaultShader {
 
 	public final int numBones;
 	private final FloatAttribute alphaTestAttribute;
-	private final long depthVertexMask;
+	private final long mask;
 
 	public DepthShader (final Renderable renderable) {
 		this(renderable, new Config());
@@ -91,7 +109,7 @@ public class DepthShader extends DefaultShader {
 		super(renderable, config, shaderProgram);
 		final Attributes attributes = combineAttributes(renderable);
 
-		depthVertexMask = renderable.getDepthVertexAttributesMaskWithSizePacked();
+		mask = renderable.getVertexAttributesMask();
 
 		if (renderable.bones != null && renderable.bones.length > config.numBones) {
 			throw new GdxRuntimeException("too many bones: " + renderable.bones.length + ", max configured: " + config.numBones);
@@ -120,7 +138,7 @@ public class DepthShader extends DefaultShader {
 
 	@Override
 	public boolean canRender (Renderable renderable) {
-		if (renderable.getDepthVertexAttributesMaskWithSizePacked() != depthVertexMask) return false;
+		if ((renderable.getVertexAttributesMask() & depthAttributeMask) != (mask & depthAttributeMask)) return false;
 		if (renderable.bones != null) {
 			if (renderable.bones.length > config.numBones) return false;
 			if (renderable.meshPart.mesh.getVertexAttributes().getBoneWeights() > config.numBoneWeights) return false;
