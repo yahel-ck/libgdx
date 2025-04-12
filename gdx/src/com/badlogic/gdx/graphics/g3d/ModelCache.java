@@ -200,6 +200,10 @@ public class ModelCache implements Disposable, RenderableProvider {
 		meshBuilder = new MeshBuilder();
 	}
 
+	public Array<Renderable> getRenderables() {
+		return renderables;
+	}
+
 	/** Begin creating the cache, must be followed by a call to {@link #end()}, in between these calls one or more calls to one of
 	 * the add(...) methods can be made. Calling this method will clear the cache and prepare it for creating a new cache. The
 	 * cache is not valid until the call to {@link #end()} is made. Use one of the add methods (e.g. {@link #add(Renderable)} or
