@@ -75,12 +75,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 			}
 		}
 
-		private void bindAttributes (
-				ShaderProgram shader,
-				int[] locations,
-				VertexAttributes attributes,
-				int bufferHandle
-		) {
+		private void bindAttributes (ShaderProgram shader, int[] locations, VertexAttributes attributes, int bufferHandle) {
 			boolean stillValid = this.cachedLocations.size != 0;
 			final int numAttributes = attributes.size();
 
@@ -119,7 +114,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 
 					shader.enableVertexAttribute(location);
 					shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized,
-							attributes.vertexSize, attribute.offset);
+						attributes.vertexSize, attribute.offset);
 				}
 			}
 		}
@@ -259,7 +254,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 	}
 
 	/** Returns a VAO from the cache for the given shader. */
-	private VAO getVAO(final int shaderHandle) {
+	private VAO getVAO (final int shaderHandle) {
 		VAO vao = cachedVAOs.get(shaderHandle, null);
 		if (vao == null) {
 			if (cachedVAOs.size >= maxCachedVAOs) {
@@ -319,7 +314,7 @@ public class VertexBufferObjectWithVAO implements VertexData {
 		deleteVAOs();
 	}
 
-	private void deleteVAOs() {
+	private void deleteVAOs () {
 		for (VAO vao : cachedVAOs.values())
 			vao.delete();
 		cachedVAOs.clear();

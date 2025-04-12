@@ -44,20 +44,20 @@ public class DepthShader extends DefaultShader {
 		}
 	}
 
-	/** Bit-map mask of VertexAttributes.Usage flags that are relevant for depth rendering.
-	 * Used to identify whether a depth shader can render a certain renderable. */
+	/** Bit-map mask of VertexAttributes.Usage flags that are relevant for depth rendering. Used to identify whether a depth shader
+	 * can render a certain renderable. */
 	private static long depthAttributeMask = VertexAttributes.Usage.Position | VertexAttributes.Usage.BoneWeight;
 
-	public static long getDepthAttributeMask() {
+	public static long getDepthAttributeMask () {
 		return depthAttributeMask;
 	}
 
-	public static void setDepthAttributeMask(long depthAttributeMask) {
+	public static void setDepthAttributeMask (long depthAttributeMask) {
 		DepthShader.depthAttributeMask = depthAttributeMask;
 	}
 
 	/** Bitwise-or the given mask to the current depth attribute mask. */
-	public static void addDepthAttributesToMask(long orDepthAttributeMask) {
+	public static void addDepthAttributesToMask (long orDepthAttributeMask) {
 		setDepthAttributeMask(getDepthAttributeMask() | orDepthAttributeMask);
 	}
 
