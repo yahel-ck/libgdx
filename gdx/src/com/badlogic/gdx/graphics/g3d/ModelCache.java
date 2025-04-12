@@ -200,7 +200,7 @@ public class ModelCache implements Disposable, RenderableProvider {
 		meshBuilder = new MeshBuilder();
 	}
 
-	public Array<Renderable> getRenderables() {
+	public Array<Renderable> getRenderables () {
 		return renderables;
 	}
 
