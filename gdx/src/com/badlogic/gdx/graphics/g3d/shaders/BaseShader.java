@@ -268,6 +268,10 @@ public abstract class BaseShader implements Shader {
 			if (setters.get(u = localUniforms.get(i)) != null) setters.get(u).set(this, u, renderable, combinedAttributes);
 
 		final InstanceData instances = renderable.instances != null ? renderable.instances : renderable.meshPart.mesh.instances;
+
+	    if (instances != null && instances.getNumInstances() == 0)
+            return;
+
 		if (currentMesh != renderable.meshPart.mesh) { // || renderable.instances != null) {
 			if (currentMesh != null) currentMesh.unbind(program, tempArray.items, null, null);
 			currentMesh = renderable.meshPart.mesh;
