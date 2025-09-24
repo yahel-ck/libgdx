@@ -363,6 +363,17 @@ public class btCollisionObject extends BulletBase implements com.badlogic.gdx.ut
 		CollisionJNI.btCollisionObject_setWorldTransform(swigCPtr, this, worldTrans);
 	}
 
+	public void setWorldTransformBuffer (java.nio.ByteBuffer newBuffer) {
+		assert newBuffer.isDirect() : "Buffer must be allocated direct.";
+		{
+			CollisionJNI.btCollisionObject_setWorldTransformBuffer(swigCPtr, this, newBuffer);
+		}
+	}
+
+	public void resetWorldTransformPointer () {
+		CollisionJNI.btCollisionObject_resetWorldTransformPointer(swigCPtr, this);
+	}
+
 	public btBroadphaseProxy getBroadphaseHandle () {
 		return btBroadphaseProxy.internalTemp(CollisionJNI.btCollisionObject_getBroadphaseHandle__SWIG_0(swigCPtr, this), false);
 	}

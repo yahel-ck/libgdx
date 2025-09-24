@@ -30311,6 +30311,36 @@ SWIGEXPORT void JNICALL Java_com_badlogic_gdx_physics_bullet_collision_Collision
 }
 
 
+SWIGEXPORT void JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1setWorldTransformBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+  btCollisionObject *arg1 = (btCollisionObject *) 0 ;
+  unsigned char *arg2 = (unsigned char *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(btCollisionObject **)&jarg1; 
+  {
+    arg2 = (unsigned char*)jenv->GetDirectBufferAddress(jarg2);
+    if (arg2 == NULL) {
+      SWIG_JavaThrowException(jenv, SWIG_JavaRuntimeException, "Unable to get address of direct buffer. Buffer must be allocated direct.");
+    }
+  }
+  (arg1)->setWorldTransformBuffer(arg2);
+  
+}
+
+
+SWIGEXPORT void JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1resetWorldTransformPointer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  btCollisionObject *arg1 = (btCollisionObject *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(btCollisionObject **)&jarg1; 
+  (arg1)->resetWorldTransformPointer();
+}
+
+
 SWIGEXPORT jlong JNICALL Java_com_badlogic_gdx_physics_bullet_collision_CollisionJNI_btCollisionObject_1getBroadphaseHandle_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   btCollisionObject *arg1 = (btCollisionObject *) 0 ;

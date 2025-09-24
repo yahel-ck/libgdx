@@ -387,6 +387,20 @@ public:
 		m_worldTransform = worldTrans;
 	}
 
+	void setWorldTransformBuffer(unsigned char* newBuffer) {
+        // static_assert(std::is_standard_layout<btCollisionObject>::value, "reseat hack requires standard-layout; behavior otherwise unpredictable");
+
+         btTransform** storage = reinterpret_cast<btTransform**>(reinterpret_cast<char*>(this) + offsetof(btCollisionObject, m_worldTransform));
+         *storage = reinterpret_cast<btTransform*>(newBuffer);
+		// m_worldTransform = newBuffer;
+    }
+
+    void resetWorldTransformPointer() {
+        if (&m_worldTransform == &m_worldTransformBuffer)
+            return;
+        m_worldTransformBuffer = m_worldTransform;
+        setWorldTransformBuffer(reinterpret_cast<unsigned char*>(&m_worldTransformBuffer));
+    }
 
 	SIMD_FORCE_INLINE btBroadphaseProxy*	getBroadphaseHandle()
 	{

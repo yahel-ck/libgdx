@@ -3695,6 +3695,11 @@ public class CollisionJNI {
 
 	public final static native void btCollisionObject_setWorldTransform (long jarg1, btCollisionObject jarg1_, Matrix4 jarg2);
 
+	public final static native void btCollisionObject_setWorldTransformBuffer (long jarg1, btCollisionObject jarg1_,
+		java.nio.ByteBuffer jarg2);
+
+	public final static native void btCollisionObject_resetWorldTransformPointer (long jarg1, btCollisionObject jarg1_);
+
 	public final static native long btCollisionObject_getBroadphaseHandle__SWIG_0 (long jarg1, btCollisionObject jarg1_);
 
 	public final static native void btCollisionObject_setBroadphaseHandle (long jarg1, btCollisionObject jarg1_, long jarg2,
